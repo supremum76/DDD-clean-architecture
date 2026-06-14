@@ -100,6 +100,22 @@ class LocationTest {
     }
 
     @Test
+    void isSameCell_withSameCoordinates_returnsTrue() {
+        Location first = Location.create(3, 4).getValue();
+        Location second = Location.create(3, 4).getValue();
+
+        assertThat(first.isSameCell(second)).isTrue();
+    }
+
+    @Test
+    void isSameCell_withDifferentCoordinates_returnsFalse() {
+        Location first = Location.create(3, 4).getValue();
+        Location second = Location.create(3, 5).getValue();
+
+        assertThat(first.isSameCell(second)).isFalse();
+    }
+
+    @Test
     void compareTo_ordersByXThenY() {
         Location first = Location.create(1, 5).getValue();
         Location second = Location.create(2, 1).getValue();
