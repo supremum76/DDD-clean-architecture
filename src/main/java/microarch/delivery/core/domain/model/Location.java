@@ -34,14 +34,20 @@ public final class Location extends ValueObject<Location> {
     }
 
     /**
-     * Возвращает расстояние до другой точки по манхэттенской метрике:
-     * сумма шагов перемещения от текущей точки к целевой точке по оси X и по оси Y 
-     * (движение только по вертикали и горизонтали).
+     * Возвращает расстояние до другой точки по манхэттенской метрике: сумма шагов перемещения от текущей точки к
+     * целевой точке по оси X и по оси Y (движение только по вертикали и горизонтали).
      */
     public int distanceTo(Location other) {
         return Math.abs(x - other.x) + Math.abs(y - other.y);
     }
 
+    public boolean isNeighbor(Location other) {
+        // проверяем, что other либо совпадает с точкой, либо соответствует одной из 8 смежных точек.
+        return
+                distanceTo(other) <= 1 ||
+                distanceTo(other) == 2 && x != other.x && y != other.y;
+    }
+    
     @Override
     protected Iterable<Object> equalityComponents() {
         return List.of(x, y);
