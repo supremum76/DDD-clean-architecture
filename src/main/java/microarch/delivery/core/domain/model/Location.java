@@ -43,11 +43,9 @@ public final class Location extends ValueObject<Location> {
 
     public boolean isNeighbor(Location other) {
         // проверяем, что other либо совпадает с точкой, либо соответствует одной из 8 смежных точек.
-        return
-                distanceTo(other) <= 1 ||
-                distanceTo(other) == 2 && x != other.x && y != other.y;
+        return distanceTo(other) <= 1 || distanceTo(other) == 2 && x != other.x && y != other.y;
     }
-    
+
     @Override
     protected Iterable<Object> equalityComponents() {
         return List.of(x, y);
