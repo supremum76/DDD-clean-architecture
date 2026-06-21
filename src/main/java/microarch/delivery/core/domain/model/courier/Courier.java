@@ -23,23 +23,22 @@ public final class Courier extends Aggregate<UUID> {
     private Location location;
     private final List<Assignment> assignments;
 
-    private Courier(UUID id, String name, Location location, List<Assignment> assignments) {
+    private Courier(UUID id, String name, Location location) {
         super(id);
         this.name = name;
         this.location = location;
-        this.assignments = new ArrayList<>(assignments);
+        this.assignments = new ArrayList<>();
     }
 
-    public static Result<Courier, Error> create(UUID id, String name, Location location, List<Assignment> assignments) {
+    public static Result<Courier, Error> create(UUID id, String name, Location location) {
         Error error = Guard.combine(Guard.againstNullOrEmpty(id, "Id"), Guard.againstNullOrEmpty(name, "Name"),
-                location == null ? GeneralErrors.valueIsRequired("Location") : null,
-                assignments == null ? GeneralErrors.valueIsRequired("Assignments") : null);
+                location == null ? GeneralErrors.valueIsRequired("Location") : null);
 
         if (error != null) {
             return Result.failure(error);
         }
 
-        return Result.success(new Courier(id, name, location, assignments));
+        return Result.success(new Courier(id, name, location));
     }
 
     public boolean canBeAssigned(Volume volume) {
@@ -51,14 +50,18 @@ public final class Courier extends Aggregate<UUID> {
                 Guard.againstNullOrEmpty(orderId, "OrderId"),
                 volume == null ? GeneralErrors.valueIsRequired("Volume") : null,
                 orderLocation == null ? GeneralErrors.valueIsRequired("OrderLocation") : null,
-                !canBeAssigned(volume) ? CourierErrors.cannotTakeOrder() : null);
+                volume != null && !canBeAssigned(volume) ? CourierErrors.cannotTakeOrder() : null);
 
         if (error != null) {
             return UnitResult.failure(error);
         }
 
-        Assignment assignment = Assignment.create(assignmentId, orderId, volume, orderLocation).getValue();
-        assignments.add(assignment);
+        Result<Assignment, Error> assignment = Assignment.create(assignmentId, orderId, volume, orderLocation);
+        if(assignment.isFailure()) {
+            return UnitResult.failure(assignment.getError());    
+        }
+        assignments.add(assignment.getValue());
+
         return UnitResult.success();
     }
 
@@ -73,9 +76,13 @@ public final class Courier extends Aggregate<UUID> {
             return UnitResult.failure(CourierErrors.assignmentCannotBeCompleted());
         }
 
-        UnitResult<Error> result = assignment.complete(location);
+        UnitResult<Error> completeResult = assignment.complete(location);
+        if (completeResult.isFailure()) {
+            return UnitResult.failure(completeResult.getError());
+        }
         assignments.remove(assignment);
-        return result;
+
+        return UnitResult.success();
     }
 
     public UnitResult<Error> move(Location newLocation) {

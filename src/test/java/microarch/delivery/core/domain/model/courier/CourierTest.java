@@ -9,8 +9,6 @@ import microarch.delivery.core.domain.model.assignment.Assignment;
 import microarch.delivery.core.domain.model.assignment.AssignmentStatus;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +23,7 @@ class CourierTest {
     void create_withValidArguments_returnsCourier() {
         Location location = Location.create(2, 3).getValue();
 
-        Result<Courier, ?> result = Courier.create(COURIER_ID, "Ivan", location, List.of());
+        Result<Courier, ?> result = Courier.create(COURIER_ID, "Ivan", location);
 
         assertThat(result.isSuccess()).isTrue();
         Courier courier = result.getValue();
@@ -39,17 +37,7 @@ class CourierTest {
     void create_withNullName_returnsFailure() {
         Location location = Location.create(2, 3).getValue();
 
-        Result<Courier, ?> result = Courier.create(COURIER_ID, null, location, List.of());
-
-        assertThat(result.isFailure()).isTrue();
-        assertThat(result.getError().getCode()).isEqualTo(GeneralErrors.VALUE_IS_REQUIRED);
-    }
-
-    @Test
-    void create_withNullAssignments_returnsFailure() {
-        Location location = Location.create(2, 3).getValue();
-
-        Result<Courier, ?> result = Courier.create(COURIER_ID, "Ivan", location, null);
+        Result<Courier, ?> result = Courier.create(COURIER_ID, null, location);
 
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getError().getCode()).isEqualTo(GeneralErrors.VALUE_IS_REQUIRED);
@@ -172,17 +160,17 @@ class CourierTest {
     void equals_withSameId_returnsTrue() {
         Courier first = createCourier(1, 1);
         Courier sameIdDifferentData = Courier
-                .create(COURIER_ID, "Petr", Location.create(9, 9).getValue(), new ArrayList<>()).getValue();
+                .create(COURIER_ID, "Petr", Location.create(9, 9).getValue()).getValue();
 
         assertThat(first).isEqualTo(sameIdDifferentData);
 
         Courier withDifferentId = Courier.create(UUID.fromString("66666666-6666-6666-6666-666666666666"), "Ivan",
-                Location.create(1, 1).getValue(), List.of()).getValue();
+                Location.create(1, 1).getValue()).getValue();
 
         assertThat(first).isNotEqualTo(withDifferentId);
     }
 
     private Courier createCourier(int x, int y) {
-        return Courier.create(COURIER_ID, "Ivan", Location.create(x, y).getValue(), List.of()).getValue();
+        return Courier.create(COURIER_ID, "Ivan", Location.create(x, y).getValue()).getValue();
     }
 }
