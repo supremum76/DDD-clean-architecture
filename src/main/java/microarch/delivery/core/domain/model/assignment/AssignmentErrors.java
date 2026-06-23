@@ -16,7 +16,7 @@ public final class AssignmentErrors {
 
     public static Error courierTooFarFromOrderLocation() {
         return Error.of(COURIER_TOO_FAR_FROM_ORDER_LOCATION,
-                "To complete the assignment, the courier must be located within neighbor or closer " +
-                        "to the location of the order.");
+                "To complete the assignment, the courier must be located within neighbor or closer "
+                        + "to the location of the order.");
     }
 }

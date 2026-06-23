@@ -40,8 +40,7 @@ public final class Assignment extends BaseEntity<UUID> {
     }
 
     public UnitResult<Error> complete(Location courierLocation) {
-        Error error = Guard.combine(
-                courierLocation == null ? GeneralErrors.valueIsRequired("CourierLocation") : null,
+        Error error = Guard.combine(courierLocation == null ? GeneralErrors.valueIsRequired("CourierLocation") : null,
                 status == AssignmentStatus.COMPLETED ? AssignmentErrors.alreadyCompleted() : null,
                 courierLocation != null && !location.isNeighbor(courierLocation)
                         ? AssignmentErrors.courierTooFarFromOrderLocation() : null);
@@ -52,6 +51,10 @@ public final class Assignment extends BaseEntity<UUID> {
 
         this.status = AssignmentStatus.COMPLETED;
         return UnitResult.success();
+    }
+
+    public boolean canBeCompleted(Location courierLocation) {
+        return status == AssignmentStatus.ASSIGNED && location.isNeighbor(courierLocation);
     }
 
 }
