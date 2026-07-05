@@ -4,13 +4,15 @@ import microarch.delivery.core.domain.model.order.Order;
 import microarch.delivery.core.domain.model.order.OrderStatus;
 import microarch.delivery.core.ports.OrderRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import org.springframework.jdbc.core.DataClassRowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -18,77 +20,82 @@ import java.util.stream.Stream;
 @Repository
 @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
 public class OrderRepositoryImpl implements OrderRepository {
-    @PersistenceContext
-    private EntityManager em;
 
-    @Transactional
-    @Override
-    public void save(Order order) {
-        em.createNativeQuery("insert into orders(id, status, volume, location_x, location_y) " +
-                "values(:id, :status, :volume, :location_x, :location_y)")
-                .setParameter("id", order.getId())
-                .setParameter("status", order.getStatus().getCode())
-                .setParameter("volume", order.getVolume().getValue())
-                .setParameter("location_x", order.getLocation().getX())
-                .setParameter("location_y", order.getLocation().getY())
-                .executeUpdate();
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    // Создаем маппер один раз. Он автоматически свяжет колонки SQL с полями OrderRowDto
+    private final DataClassRowMapper<OrderRowDto> rowMapper = DataClassRowMapper.newInstance(OrderRowDto.class);
+
+    // Спринг автоматически внедрит jdbcTemplate
+    public OrderRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Transactional
     @Override
+    @Transactional
+    public void save(Order order) {
+        String sql = "insert into orders(id, status, volume, location_x, location_y) " +
+                "values(:id, :status, :volume, :location_x, :location_y)";
+
+        var params = new MapSqlParameterSource()
+                .addValue("id", order.getId())
+                .addValue("status", order.getStatus().getCode())
+                .addValue("volume", order.getVolume().getValue())
+                .addValue("location_x", order.getLocation().getX())
+                .addValue("location_y", order.getLocation().getY());
+
+        jdbcTemplate.update(sql, params);
+    }
+
+    @Override
+    @Transactional
     public void update(Order order) {
-        em.createNativeQuery("update orders set " +
-                        "status = :status," +
-                        "volume = :volume," +
-                        "location_x = :location_x," +
-                        "location_y = :location_y " +
-                        "where id = :id")
-                .setParameter("id", order.getId())
-                .setParameter("status", order.getStatus().getCode())
-                .setParameter("volume", order.getVolume().getValue())
-                .setParameter("location_x", order.getLocation().getX())
-                .setParameter("location_y", order.getLocation().getY())
-                .executeUpdate();
+        String sql = "update orders set status = :status, volume = :volume, " +
+                "location_x = :location_x, location_y = :location_y where id = :id";
+
+        var params = new MapSqlParameterSource()
+                .addValue("id", order.getId())
+                .addValue("status", order.getStatus().getCode())
+                .addValue("volume", order.getVolume().getValue())
+                .addValue("location_x", order.getLocation().getX())
+                .addValue("location_y", order.getLocation().getY());
+
+        jdbcTemplate.update(sql, params);
     }
 
     @Override
     public Optional<Order> findById(UUID orderId) {
-        // Передаем имя маппинга вторым аргументом
-        var query = em.createNativeQuery(
-                "select id, status, volume, location_x, location_y from orders where id = :id",
-                OrderMappingEntity.MAPPING_NAME
-        );
-        query.setParameter("id", orderId);
+        String sql = "select id, status, volume, location_x, location_y from orders where id = :id";
 
-        try (Stream<?> stream = query.getResultStream()) {
-            return stream.map(dto -> ((OrderRowDto) dto).toDomain()).findFirst();
-        }
+        // Передаем параметры и маппер. Метод возвращает список из 0 или 1 элемента
+        List<OrderRowDto> results = jdbcTemplate.query(sql, Map.of("id", orderId), rowMapper);
+
+        // Явный и понятный маппинг в домен
+        return results.stream().map(OrderRowDto::toDomain).findFirst();
     }
 
     @Override
     public Optional<Order> findAnyCreated() {
-        var query = em.createNativeQuery(
-                "select id, status, volume, location_x, location_y from orders where status = :created_code",
-                OrderMappingEntity.MAPPING_NAME
-        );
-        query.setParameter("created_code", OrderStatus.CREATED.getCode());
+        String sql = "select id, status, volume, location_x, location_y from orders where status = :created_code";
 
-        try (Stream<OrderRowDto> stream = query.getResultStream()) {
-            return stream.map(OrderRowDto::toDomain).findFirst();
-        }
+        List<OrderRowDto> results = jdbcTemplate.query(
+                sql,
+                Map.of("created_code", OrderStatus.CREATED.getCode()),
+                rowMapper
+        );
+
+        return results.stream().map(OrderRowDto::toDomain).findFirst();
     }
 
     @Override
     public List<Order> findAllAssigned() {
-        var query = em.createNativeQuery(
-                "select id, status, volume, location_x, location_y " +
-                        "from orders where status = :assigned_code",
-                OrderMappingEntity.MAPPING_NAME
-        );
-        query.setParameter("assigned_code", OrderStatus.ASSIGNED.getCode());
+        String sql = "select id, status, volume, location_x, location_y from orders where status = :assigned_code";
 
-        try (Stream<OrderRowDto> stream = query.getResultStream()) {
-            return stream.map(OrderRowDto::toDomain).toList();
-        }
+        List<OrderRowDto> results = jdbcTemplate.query(
+                sql,
+                Map.of("assigned_code", OrderStatus.ASSIGNED.getCode()),
+                rowMapper
+        );
+
+        return results.stream().map(OrderRowDto::toDomain).toList();
     }
 }
