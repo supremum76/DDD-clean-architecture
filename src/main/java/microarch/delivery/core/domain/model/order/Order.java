@@ -25,6 +25,13 @@ public final class Order extends Aggregate<UUID> {
         this.status = OrderStatus.CREATED;
     }
 
+    public Order(UUID id, Location location, Volume volume, OrderStatus status) {
+        super(id);
+        this.location = location;
+        this.volume = volume;
+        this.status = status;
+    }
+
     public static Result<Order, Error> create(UUID id, Location location, Volume volume) {
         Error error = Guard.combine(Guard.againstNullOrEmpty(id, "Id"),
                 location == null ? GeneralErrors.valueIsRequired("Location") : null,
