@@ -1,9 +1,7 @@
 package microarch.delivery.adapters.out.postgres;
 
-import microarch.delivery.core.domain.model.Volume;
 import microarch.delivery.core.domain.model.order.Order;
 import microarch.delivery.core.domain.model.order.OrderStatus;
-import microarch.delivery.core.domain.model.Location;
 import microarch.delivery.core.ports.OrderRepository;
 
 import jakarta.persistence.EntityManager;
@@ -18,14 +16,15 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 @Repository
+@Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
 public class OrderRepositoryImpl implements OrderRepository {
     @PersistenceContext
     private EntityManager em;
 
-    @Override
     @Transactional
+    @Override
     public void save(Order order) {
-        em.createNativeQuery("insert into orders(id, status, volume, location_x, location_y) select " +
+        em.createNativeQuery("insert into orders(id, status, volume, location_x, location_y) " +
                 "values(:id, :status, :volume, :location_x, :location_y)")
                 .setParameter("id", order.getId())
                 .setParameter("status", order.getStatus().getCode())
@@ -35,8 +34,8 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .executeUpdate();
     }
 
-    @Override
     @Transactional
+    @Override
     public void update(Order order) {
         em.createNativeQuery("update orders set " +
                         "status = :status," +
@@ -53,80 +52,43 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public Object findById(UUID orderId) {
-        var query = em.createQuery(
-                "select id, status, volume, location_x, location_y " +
-                        "from orders where id = :id");
+    public Optional<Order> findById(UUID orderId) {
+        // Передаем имя маппинга вторым аргументом
+        var query = em.createNativeQuery(
+                "select id, status, volume, location_x, location_y from orders where id = :id",
+                OrderMappingEntity.MAPPING_NAME
+        );
         query.setParameter("id", orderId);
 
-        try(Stream stream = query.getResultStream()) {
-            Optional rowOpt = stream.findFirst();
-
-            if (rowOpt.isPresent()) {
-                Object[] row = (Object[]) rowOpt.get();
-
-                var id = (UUID) row[0];
-                var status = OrderStatus.values()[(int) row[1]];
-                var volume = Volume.create((int) row[2]).getValue();
-                var location_x = (int) row[3];
-                var location_y = (int) row[4];
-
-                return Optional.of(new Order(id, Location.create(location_x, location_y).getValue(), volume, status));
-            }
+        try (Stream<?> stream = query.getResultStream()) {
+            return stream.map(dto -> ((OrderRowDto) dto).toDomain()).findFirst();
         }
-
-        return Optional.empty();
     }
 
     @Override
     public Optional<Order> findAnyCreated() {
-        var query = em.createQuery(
-                "select id, status, volume, location_x, location_y " +
-                        "from orders where status = :created_code");
+        var query = em.createNativeQuery(
+                "select id, status, volume, location_x, location_y from orders where status = :created_code",
+                OrderMappingEntity.MAPPING_NAME
+        );
         query.setParameter("created_code", OrderStatus.CREATED.getCode());
 
-        try(Stream stream = query.getResultStream()) {
-            Optional rowOpt = stream.findFirst();
-
-            if (rowOpt.isPresent()) {
-                Object[] row = (Object[]) rowOpt.get();
-
-                var id = (UUID) row[0];
-                var status = OrderStatus.values()[(int) row[1]];
-                var volume = Volume.create((int) row[2]).getValue();
-                var location_x = (int) row[3];
-                var location_y = (int) row[4];
-
-                return Optional.of(new Order(id, Location.create(location_x, location_y).getValue(), volume, status));
-            }
+        try (Stream<OrderRowDto> stream = query.getResultStream()) {
+            return stream.map(OrderRowDto::toDomain).findFirst();
         }
-
-        return Optional.empty();
     }
 
     @Override
-    public Optional<List<Order>> findAllAssigned() {
-        var query = em.createQuery(
+    public List<Order> findAllAssigned() {
+        var query = em.createNativeQuery(
                 "select id, status, volume, location_x, location_y " +
-                        "from orders where status = :assigned_code");
+                        "from orders where status = :assigned_code",
+                OrderMappingEntity.MAPPING_NAME
+        );
         query.setParameter("assigned_code", OrderStatus.ASSIGNED.getCode());
 
-        try(Stream stream = query.getResultStream()) {
-            List orders =  stream.map(row -> {
-                var id = (UUID) ((Object[]) row)[0];
-                var status = OrderStatus.values()[(int) ((Object[]) row)[1]];
-                var volume = Volume.create((int) ((Object[]) row)[2]).getValue();
-                var location_x = (int) ((Object[]) row)[3];
-                var location_y = (int) ((Object[]) row)[4];
-
-                return new Order(id, Location.create(location_x, location_y).getValue(), volume, status);
-            }).toList();
-
-            if(!orders.isEmpty())
-                return Optional.of((List<Order>) orders);
+        try (Stream<OrderRowDto> stream = query.getResultStream()) {
+            return stream.map(OrderRowDto::toDomain).toList();
         }
-
-        return Optional.empty();
     }
 }

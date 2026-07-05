@@ -12,5 +12,5 @@ public interface OrderRepository {
 
     Object findById(UUID orderId);
     Optional<Order> findAnyCreated();
-    Optional<List<Order>> findAllAssigned();
+    List<Order> findAllAssigned();
 }
