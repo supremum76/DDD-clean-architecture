@@ -30,8 +30,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     @Transactional
     public void save(Order order) {
-        String sql = "insert into orders(id, status, volume, location_x, location_y) " +
-                "values(:id, :status, :volume, :location_x, :location_y)";
+        String sql = """
+                INSERT INTO orders(id, status, volume, location_x, location_y)
+                VALUES(:id, :status, :volume, :location_x, :location_y)
+                """;
 
         var params = new MapSqlParameterSource()
                 .addValue("id", order.getId())
@@ -46,8 +48,15 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     @Transactional
     public void update(Order order) {
-        String sql = "update orders set status = :status, volume = :volume, " +
-                "location_x = :location_x, location_y = :location_y where id = :id";
+        String sql = """
+                UPDATE orders
+                SET
+                    status = :status,
+                    volume = :volume,
+                    location_x = :location_x,
+                    location_y = :location_y 
+                WHERE id = :id
+                """;
 
         var params = new MapSqlParameterSource()
                 .addValue("id", order.getId())
@@ -61,7 +70,11 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Optional<Order> findById(UUID orderId) {
-        String sql = "select id, status, volume, location_x, location_y from orders where id = :id";
+        String sql = """
+            SELECT id, status, volume, location_x, location_y
+            FROM orders
+            WHERE id = :id
+        """;
 
         List<OrderDto> results = jdbcTemplate.query(sql, Map.of("id", orderId), orderMapper);
 
@@ -70,7 +83,11 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Optional<Order> findAnyCreated() {
-        String sql = "select id, status, volume, location_x, location_y from orders where status = :created_code";
+        String sql = """
+            SELECT id, status, volume, location_x, location_y
+            FROM orders
+            WHERE status = :created_code
+            """;
 
         List<OrderDto> results = jdbcTemplate.query(
                 sql,
@@ -83,7 +100,11 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Collection<Order> findAllAssigned() {
-        String sql = "select id, status, volume, location_x, location_y from orders where status = :assigned_code";
+        String sql = """
+            SELECT id, status, volume, location_x, location_y
+            FROM orders
+            WHERE status = :assigned_code
+            """;
 
         List<OrderDto> results = jdbcTemplate.query(
                 sql,

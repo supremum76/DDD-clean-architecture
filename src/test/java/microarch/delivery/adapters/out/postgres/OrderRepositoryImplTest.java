@@ -8,15 +8,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class OrderRepositoryImplTest extends BaseConfig {
+@Import(OrderRepositoryImpl.class) // Явно импортируем наш репозиторий, так как @JdbcTest его не сканирует
+class OrderRepositoryImplTest extends JdbcTestBaseConfig {
     @Autowired
     private OrderRepositoryImpl orderRepository;
 

@@ -66,11 +66,11 @@ public class CourierRepositoryImpl implements CourierRepository {
                     name = :name,
                     location_x = :location_x,
                     location_y = :location_y
-                WHERE id = :id
+                WHERE id = :courier_id
                 """;
 
         var params = new MapSqlParameterSource()
-                .addValue("id", courier.getId())
+                .addValue("courier_id", courier.getId())
                 .addValue("name", courier.getName())
                 .addValue("location_x", courier.getLocation().getX())
                 .addValue("location_y", courier.getLocation().getY());
@@ -104,7 +104,7 @@ public class CourierRepositoryImpl implements CourierRepository {
                 sqlAssignments,
                 Map.of(
                         "courier_id", courierId,
-                        "complete_status", AssignmentStatus.ASSIGNED.getCode()
+                        "assigned_status", AssignmentStatus.ASSIGNED.getCode()
                 ),
                         assignmentMapper
                 )
@@ -131,11 +131,11 @@ public class CourierRepositoryImpl implements CourierRepository {
                 couriers.location_y AS courier_location_y,
         
                 assignments.id AS assignment_id,
-                assignments.order_id,
-                assignments.status,
-                assignments.volume,
-                assignments.location_x AS assignment_location_x,
-                assignments.location_y AS assignment_location_y
+                assignments.order_id AS order_id,
+                coalesce(assignments.status, 0) AS status,
+                coalesce(assignments.volume, 0) AS volume,
+                coalesce(assignments.location_x, 0) AS assignment_location_x,
+                coalesce(assignments.location_y, 0) AS assignment_location_y
             FROM
                 couriers
                 LEFT JOIN assignments ON
@@ -155,15 +155,16 @@ public class CourierRepositoryImpl implements CourierRepository {
                                 row.courierId,
                                 row.name,
                                 Location.create(row.courierLocationX, row.courierLocationY).getValueOrThrow(),
-                                List.of(
-                                        Assignment.dto2domain(
-                                                row.assignmentId,
-                                                row.orderId,
-                                                Volume.create(row.volume).getValueOrThrow(),
-                                                Location.create(row.assignmentLocationX, row.assignmentLocationY).getValueOrThrow(),
-                                                AssignmentStatus.fromCode(row.status)
+                                row.assignmentId == null ? List.of() :
+                                        List.of(
+                                                Assignment.dto2domain(
+                                                        row.assignmentId,
+                                                        row.orderId,
+                                                        Volume.create(row.volume).getValueOrThrow(),
+                                                        Location.create(row.assignmentLocationX, row.assignmentLocationY).getValueOrThrow(),
+                                                        AssignmentStatus.fromCode(row.status)
+                                                )
                                         )
-                                )
                         )
                 )
                 .collect(
@@ -186,14 +187,20 @@ public class CourierRepositoryImpl implements CourierRepository {
         final var dummy_params = new MapSqlParameterSource();
 
         jdbcTemplate.update("""
-                    CREATE TEMPORARY TABLE temp_assignments (
+                    CREATE TEMPORARY TABLE IF NOT EXISTS temp_assignments (
                         id UUID NOT NULL,
                         order_id UUID NOT NULL,
                         status int NOT NULL,
                         volume int NOT NULL,
                         location_x int NOT NULL,
                         location_y int NOT NULL
-                    ) ON COMMIT DROP
+                    )
+                    """,
+                dummy_params);
+
+        // очищаем от данных предыдущих вызовов
+        jdbcTemplate.update("""
+                    TRUNCATE PG_TEMP.temp_assignments
                     """,
                 dummy_params);
 
@@ -218,9 +225,9 @@ public class CourierRepositoryImpl implements CourierRepository {
                 UPDATE assignments
                 SET status = :complete_code
                 WHERE
-                        courier_id = :courier_id
-                    AND status != :complete_code
-                    AND id NOT IN(SELECT id FROM temp_assignments)
+                       courier_id = :courier_id
+                   AND status != :complete_code
+                   AND id NOT IN(SELECT temp_assignments.id FROM temp_assignments)
                 """;
         jdbcTemplate.update(
                 sqlComplete,
