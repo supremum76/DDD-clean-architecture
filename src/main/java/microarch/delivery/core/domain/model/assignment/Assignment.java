@@ -9,7 +9,9 @@ import libs.errs.UnitResult;
 import lombok.Getter;
 import microarch.delivery.core.domain.model.Location;
 import microarch.delivery.core.domain.model.Volume;
+import microarch.delivery.core.domain.model.courier.Courier;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -19,12 +21,12 @@ public final class Assignment extends BaseEntity<UUID> {
     private final Location location;
     private AssignmentStatus status;
 
-    private Assignment(UUID id, UUID orderId, Volume volume, Location location) {
+    private Assignment(UUID id, UUID orderId, Volume volume, Location location, AssignmentStatus status) {
         super(id);
         this.orderId = orderId;
         this.volume = volume;
         this.location = location;
-        this.status = AssignmentStatus.ASSIGNED;
+        this.status = status;
     }
 
     public static Result<Assignment, Error> create(UUID id, UUID orderId, Volume volume, Location location) {
@@ -36,7 +38,11 @@ public final class Assignment extends BaseEntity<UUID> {
             return Result.failure(error);
         }
 
-        return Result.success(new Assignment(id, orderId, volume, location));
+        return Result.success(new Assignment(id, orderId, volume, location, AssignmentStatus.ASSIGNED));
+    }
+
+    static public Assignment dto2domain(UUID id, UUID orderId, Volume volume, Location location, AssignmentStatus status) {
+        return new Assignment(id, orderId, volume, location, status);
     }
 
     public UnitResult<Error> complete(Location courierLocation) {

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,7 +25,7 @@ class OrderRepositoryImplTest extends BaseConfig {
     @BeforeEach
     void setUp() {
         // Инициализируем тестовый объект перед каждым тестом
-        testOrder = new Order(
+        testOrder = Order.dto2domain(
                 UUID.randomUUID(),
                 Location.create(3, 7).getValue(),
                 Volume.create(100).getValue(),
@@ -56,7 +57,7 @@ class OrderRepositoryImplTest extends BaseConfig {
         // Arrange
         orderRepository.save(testOrder);
 
-        Order updatedOrder = new Order(
+        Order updatedOrder = Order.dto2domain(
                 testOrder.getId(),
                 Location.create(testOrder.getLocation().getX(), testOrder.getLocation().getY()).getValue(),
                 Volume.create(testOrder.getVolume().getValue()).getValue(),
@@ -94,12 +95,12 @@ class OrderRepositoryImplTest extends BaseConfig {
     @DisplayName("Должен вернуть список всех назначенных заказов (findAllAssigned)")
     void shouldFindAllAssignedOrders() {
         // Arrange
-        Order assignedOrder1 = new Order(
+        Order assignedOrder1 = Order.dto2domain(
                 UUID.randomUUID(),
                 Location.create(1, 1).getValue(),
                 Volume.create(10).getValue(),
                 OrderStatus.ASSIGNED);
-        Order assignedOrder2 = new Order(
+        Order assignedOrder2 = Order.dto2domain(
                 UUID.randomUUID(),
                 Location.create(2, 2).getValue(),
                 Volume.create(20).getValue(),
@@ -110,7 +111,7 @@ class OrderRepositoryImplTest extends BaseConfig {
         orderRepository.save(assignedOrder2);
 
         // Act
-        List<Order> assignedOrders = orderRepository.findAllAssigned();
+        Collection<Order> assignedOrders = orderRepository.findAllAssigned();
 
         // Assert
         assertThat(assignedOrders)
@@ -126,7 +127,7 @@ class OrderRepositoryImplTest extends BaseConfig {
         orderRepository.save(testOrder); // Только CREATED
 
         // Act
-        List<Order> assignedOrders = orderRepository.findAllAssigned();
+        Collection<Order> assignedOrders = orderRepository.findAllAssigned();
 
         // Assert
         assertThat(assignedOrders).isEmpty();

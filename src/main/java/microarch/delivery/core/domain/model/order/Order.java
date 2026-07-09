@@ -18,14 +18,7 @@ public final class Order extends Aggregate<UUID> {
     private final Volume volume;
     private OrderStatus status;
 
-    private Order(UUID id, Location location, Volume volume) {
-        super(id);
-        this.location = location;
-        this.volume = volume;
-        this.status = OrderStatus.CREATED;
-    }
-
-    public Order(UUID id, Location location, Volume volume, OrderStatus status) {
+    private Order(UUID id, Location location, Volume volume, OrderStatus status) {
         super(id);
         this.location = location;
         this.volume = volume;
@@ -41,7 +34,11 @@ public final class Order extends Aggregate<UUID> {
             return Result.failure(error);
         }
 
-        return Result.success(new Order(id, location, volume));
+        return Result.success(new Order(id, location, volume, OrderStatus.CREATED));
+    }
+
+    public static Order dto2domain(UUID id, Location location, Volume volume, OrderStatus status) {
+        return new Order(id, location, volume, status);
     }
 
     public UnitResult<Error> assign() {

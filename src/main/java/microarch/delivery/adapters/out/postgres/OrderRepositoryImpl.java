@@ -1,5 +1,6 @@
 package microarch.delivery.adapters.out.postgres;
 
+import microarch.delivery.adapters.out.postgres.dto.OrderDto;
 import microarch.delivery.core.domain.model.order.Order;
 import microarch.delivery.core.domain.model.order.OrderStatus;
 import microarch.delivery.core.ports.OrderRepository;
@@ -11,19 +12,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
+import java.util.*;
 
 @Repository
 @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
 public class OrderRepositoryImpl implements OrderRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    // Создаем маппер один раз. Он автоматически свяжет колонки SQL с полями OrderRowDto
-    private final DataClassRowMapper<OrderRowDto> rowMapper = DataClassRowMapper.newInstance(OrderRowDto.class);
+    // Создаем маппер один раз. Он автоматически свяжет колонки SQL с полями OrderDto
+    private final DataClassRowMapper<OrderDto> orderMapper = DataClassRowMapper.newInstance(OrderDto.class);
 
     // Спринг автоматически внедрит jdbcTemplate
     public OrderRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -66,36 +63,34 @@ public class OrderRepositoryImpl implements OrderRepository {
     public Optional<Order> findById(UUID orderId) {
         String sql = "select id, status, volume, location_x, location_y from orders where id = :id";
 
-        // Передаем параметры и маппер. Метод возвращает список из 0 или 1 элемента
-        List<OrderRowDto> results = jdbcTemplate.query(sql, Map.of("id", orderId), rowMapper);
+        List<OrderDto> results = jdbcTemplate.query(sql, Map.of("id", orderId), orderMapper);
 
-        // Явный и понятный маппинг в домен
-        return results.stream().map(OrderRowDto::toDomain).findFirst();
+        return results.stream().map(OrderDto::toDomain).findFirst();
     }
 
     @Override
     public Optional<Order> findAnyCreated() {
         String sql = "select id, status, volume, location_x, location_y from orders where status = :created_code";
 
-        List<OrderRowDto> results = jdbcTemplate.query(
+        List<OrderDto> results = jdbcTemplate.query(
                 sql,
                 Map.of("created_code", OrderStatus.CREATED.getCode()),
-                rowMapper
+                orderMapper
         );
 
-        return results.stream().map(OrderRowDto::toDomain).findFirst();
+        return results.stream().map(OrderDto::toDomain).findFirst();
     }
 
     @Override
-    public List<Order> findAllAssigned() {
+    public Collection<Order> findAllAssigned() {
         String sql = "select id, status, volume, location_x, location_y from orders where status = :assigned_code";
 
-        List<OrderRowDto> results = jdbcTemplate.query(
+        List<OrderDto> results = jdbcTemplate.query(
                 sql,
                 Map.of("assigned_code", OrderStatus.ASSIGNED.getCode()),
-                rowMapper
+                orderMapper
         );
 
-        return results.stream().map(OrderRowDto::toDomain).toList();
+        return results.stream().map(OrderDto::toDomain).toList();
     }
 }
