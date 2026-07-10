@@ -41,6 +41,12 @@ public final class Courier extends Aggregate<UUID> {
         return Result.success(new Courier(id, name, location));
     }
 
+    static public Courier dto2domain(UUID id, String name, Location location, List<Assignment> assignments) {
+        var courier = new Courier(id, name, location);
+        courier.assignments.addAll(assignments);
+        return courier;
+    }
+
     public boolean canBeAssigned(Volume volume) {
         return getCurrentVolume() + volume.getValue() <= MAX_VOLUME;
     }
@@ -58,7 +64,7 @@ public final class Courier extends Aggregate<UUID> {
 
         Result<Assignment, Error> assignment = Assignment.create(assignmentId, orderId, volume, orderLocation);
         if(assignment.isFailure()) {
-            return UnitResult.failure(assignment.getError());    
+            return UnitResult.failure(assignment.getError());
         }
         assignments.add(assignment.getValue());
 
