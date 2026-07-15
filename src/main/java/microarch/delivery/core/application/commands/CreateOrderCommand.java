@@ -36,8 +36,7 @@ public final class CreateOrderCommand {
                 Guard.againstNullOrEmpty(city, "city"),
                 Guard.againstNullOrEmpty(street, "street"),
                 Guard.againstNullOrEmpty(house, "house"),
-                Guard.againstNullOrEmpty(apartment, "apartment"),
-                Guard.againstLessOrEqual(volume, 1, "volume")
+                Guard.againstNullOrEmpty(apartment, "apartment")
         );
         if (err != null)
             return Result.failure(err);

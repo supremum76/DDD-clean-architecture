@@ -1,5 +1,6 @@
 package microarch.delivery.core.domain.services;
 
+import jakarta.validation.constraints.NotNull;
 import libs.errs.Error;
 import libs.errs.GeneralErrors;
 import libs.errs.Guard;
@@ -11,6 +12,7 @@ import microarch.delivery.core.domain.model.order.OrderErrors;
 import microarch.delivery.core.domain.model.order.OrderStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +20,7 @@ import java.util.UUID;
 public class OrderDispatchServiceImpl implements OrderDispatchService {
 
     @Override
-    public Result<Courier, Error> dispatch(UUID assignmentId, Order order, List<Courier> couriers) {
+    public Result<Courier, Error> dispatch(UUID assignmentId, Order order, Collection<Courier> couriers) {
         Error error = Guard.combine(Guard.againstNullOrEmpty(assignmentId, "AssignmentId"),
                 order == null ? GeneralErrors.valueIsRequired("Order") : null,
                 couriers == null ? GeneralErrors.valueIsRequired("Couriers") : null,
@@ -48,7 +50,7 @@ public class OrderDispatchServiceImpl implements OrderDispatchService {
         return Result.success(selectedCourier);
     }
 
-    private Courier selectClosestAvailableCourier(Order order, List<Courier> couriers) {
+    private Courier selectClosestAvailableCourier(Order order, Collection<Courier> couriers) {
         Courier selectedCourier = null;
         int minDistance = Integer.MAX_VALUE;
 
