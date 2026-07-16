@@ -13,16 +13,16 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CompleteOrderCommand {
     private final UUID courierId;
-    private final UUID assignId;
+    private final UUID assignmentId;
 
-    public static Result<CompleteOrderCommand, Error> create(UUID courierId, UUID assignId) {
+    public static Result<CompleteOrderCommand, Error> create(UUID courierId, UUID assignmentId) {
         var err = Guard.combine(
                 Guard.againstNullOrEmpty(courierId, "courierId"),
-                Guard.againstNullOrEmpty(assignId, "assignId")
+                Guard.againstNullOrEmpty(assignmentId, "assignmentId")
         );
         if (err != null)
             return Result.failure(err);
 
-        return Result.success(new CompleteOrderCommand(courierId, assignId));
+        return Result.success(new CompleteOrderCommand(courierId, assignmentId));
     }
 }

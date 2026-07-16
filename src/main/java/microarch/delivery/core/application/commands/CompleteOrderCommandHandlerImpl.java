@@ -4,13 +4,11 @@ import libs.ddd.DomainEventPublisher;
 import libs.errs.Error;
 import libs.errs.GeneralErrors;
 import libs.errs.UnitResult;
-import microarch.delivery.core.domain.model.courier.Courier;
 import microarch.delivery.core.ports.CourierRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class CompleteOrderCommandHandlerImpl implements CompleteOrderCommandHandler {
@@ -30,7 +28,7 @@ public class CompleteOrderCommandHandlerImpl implements CompleteOrderCommandHand
             return UnitResult.failure(GeneralErrors.notFound("courier", command.getCourierId()));
         var courier = courierOpt.get();
 
-        var completeResult = courier.completeAssignment(command.getAssignId());
+        var completeResult = courier.completeAssignment(command.getAssignmentId());
         if(completeResult.isFailure())
             return UnitResult.failure(completeResult.getError());
 

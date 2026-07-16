@@ -29,7 +29,7 @@ public class GetNotCompletedOrdersQueryHandlerImpl implements GetNotCompletedOrd
     public Result<Collection<GetNotCompletedOrdersResponse>, Error> handle(GetNotCompletedOrdersQuery query) {
 
         String sql = """
-                SELECT id, name, location_x, location_y
+                SELECT id, location_x, location_y
                 FROM orders
                 WHERE status != :completed_code
                 """;
