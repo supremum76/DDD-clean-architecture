@@ -115,7 +115,7 @@ class CourierRepositoryImplTest extends JdbcTestBaseConfig {
     void shouldUpdateCourierAndItsAssignments() {
         courierRepository.save(testCourier);
 
-        testCourier.completeAssignment(assignment1.getId());
+        testCourier.completeAssignment(assignment1.getOrderId());
 
         UUID newAssignmentId = UUID.randomUUID();
         testCourier.takeOrder(
