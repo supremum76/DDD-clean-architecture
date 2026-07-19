@@ -106,7 +106,7 @@ class CourierTest {
         Courier courier = createCourier(3, 4);
         courier.takeOrder(ASSIGNMENT_ID, ORDER_ID, Volume.create(5).getValue(), Location.create(3, 4).getValue());
 
-        UnitResult<?> result = courier.completeAssignment(ASSIGNMENT_ID);
+        UnitResult<?> result = courier.completeAssignment(ORDER_ID);
 
         assertThat(result.isSuccess()).isTrue();
         assertThat(courier.getAssignments()).isEmpty();
@@ -117,7 +117,7 @@ class CourierTest {
         Courier courier = createCourier(1, 1);
         courier.takeOrder(ASSIGNMENT_ID, ORDER_ID, Volume.create(5).getValue(), Location.create(5, 6).getValue());
 
-        UnitResult<?> result = courier.completeAssignment(ASSIGNMENT_ID);
+        UnitResult<?> result = courier.completeAssignment(ORDER_ID);
 
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getError().getCode()).isEqualTo(CourierErrors.ASSIGNMENT_CANNOT_BE_COMPLETED);

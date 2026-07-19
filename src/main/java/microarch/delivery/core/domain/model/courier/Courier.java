@@ -71,8 +71,8 @@ public final class Courier extends Aggregate<UUID> {
         return UnitResult.success();
     }
 
-    public UnitResult<Error> completeAssignment(UUID assignmentId) {
-        Assignment assignment = findAssignment(assignmentId);
+    public UnitResult<Error> completeAssignment(UUID orderId) {
+        Assignment assignment = findAssignment(orderId);
 
         if (assignment == null) {
             return UnitResult.failure(CourierErrors.assignmentNotFound());
@@ -100,8 +100,8 @@ public final class Courier extends Aggregate<UUID> {
         return UnitResult.success();
     }
 
-    private Assignment findAssignment(UUID assignmentId) {
-        return assignments.stream().filter(assignment -> assignment.getId().equals(assignmentId)).findFirst()
+    private Assignment findAssignment(UUID orderId) {
+        return assignments.stream().filter(assignment -> assignment.getOrderId().equals(orderId)).findFirst()
                 .orElse(null);
     }
 
