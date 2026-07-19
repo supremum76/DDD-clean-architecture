@@ -6,8 +6,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
-@EntityScan(basePackages = { "microarch.delivery.core.domain.model",
-        "microarch.delivery.adapters.out.postgres.outbox" })
+@EntityScan(basePackages = {
+        "microarch.delivery.core.domain.model",
+        "microarch.delivery.adapters.out.postgres" })
 @SpringBootApplication
 public class DeliveryApplication {
 

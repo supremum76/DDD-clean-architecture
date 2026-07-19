@@ -1,48 +1,43 @@
 package microarch.delivery.adapters.in.http;
 
-import model.CreateCourierResponse;
-import model.Error;
-import model.NewCourier;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.context.request.NativeWebRequest;
-
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import jakarta.annotation.Generated;
+import lombok.RequiredArgsConstructor;
+import microarch.delivery.adapters.in.http.api.CreateCourierApi;
+import microarch.delivery.adapters.in.http.model.CreateCourierResponse;
+import microarch.delivery.adapters.in.http.model.NewCourier;
+import microarch.delivery.core.application.commands.CreateCourierCommand;
+import microarch.delivery.core.application.commands.CreateCourierCommandHandler;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-18T18:31:02.352874400+03:00[Europe/Moscow]", comments = "Generator version: 7.23.0")
-@Controller
+@RestController
 @RequestMapping("${openapi.swaggerDelivery.base-path:}")
+@RequiredArgsConstructor
 public class CreateCourierApiController implements CreateCourierApi {
-
-    private final NativeWebRequest request;
-
-    @Autowired
-    public CreateCourierApiController(NativeWebRequest request) {
-        this.request = request;
-    }
+    private final CreateCourierCommandHandler createCourierCommandHandler;
 
     @Override
-    public Optional<NativeWebRequest> getRequest() {
-        return Optional.ofNullable(request);
-    }
+    public ResponseEntity<CreateCourierResponse> createCourier(NewCourier newCourier) {
+        final var courierId = UUID.randomUUID();
 
+        // Формируем команду
+        var createCommandResult = CreateCourierCommand.create(courierId, newCourier.getName());
+        if (createCommandResult.isFailure())
+            return ResponseEntity.badRequest().build();
+        var command = createCommandResult.getValue();
+
+        // Обрабатываем команду
+        var handleCommandResult = this.createCourierCommandHandler.handle(command);
+        if (handleCommandResult.isFailure())
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+
+        // Формируем ответ
+        var response = new CreateCourierResponse(courierId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }
