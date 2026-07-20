@@ -5,8 +5,8 @@
  */
 package microarch.delivery.adapters.in.http.api;
 
-import model.Error;
-import model.Location;
+import microarch.delivery.adapters.in.http.model.Error;
+import microarch.delivery.adapters.in.http.model.Location;
 import java.util.UUID;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;

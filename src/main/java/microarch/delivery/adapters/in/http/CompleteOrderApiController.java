@@ -31,6 +31,7 @@ public class CompleteOrderApiController implements CompleteOrderApi {
         var handleCommandResult = this.completeOrderCommandHandler.handle(command);
         if (handleCommandResult.isFailure())
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+
         return ResponseEntity.ok().build();
     }
 }
