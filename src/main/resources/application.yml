@@ -4,6 +4,11 @@ spring:
     username: ${DB_USER:username}
     password: ${DB_PASSWORD:secret}
 
+  jackson:
+    date-format: microarch.delivery.adapters.in.http.org.openapitools.RFC3339DateFormat
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+
   jpa:
     hibernate:
       ddl-auto: update
