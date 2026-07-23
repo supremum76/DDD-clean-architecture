@@ -23,7 +23,11 @@ public class MoveCourierApiController implements MoveCourierApi {
     @Override
     public ResponseEntity<Void> moveCourier(UUID courierId, Location location) {
         // Формируем команду
-        var createCommandResult = MoveCourierCommand.create(courierId, location.getX(), location.getX());
+        var createCommandResult = MoveCourierCommand.create(
+                courierId,
+                location.getX(),
+                location.getY()
+        );
         if (createCommandResult.isFailure())
             return ResponseEntity.badRequest().build();
         var command = createCommandResult.getValue();

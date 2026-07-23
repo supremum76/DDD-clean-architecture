@@ -32,7 +32,7 @@ public class GetCouriersApiController implements GetCouriersApi {
         // Обрабатываем команду
         var handleCommandResult = this.getAllCouriersQueryHandler.handle(command);
         if (handleCommandResult.isFailure())
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.badRequest().build();
 
         // Формируем ответ
         var response = handleCommandResult

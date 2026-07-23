@@ -32,7 +32,7 @@ public class GetOrdersApiController implements GetOrdersApi {
         // Обрабатываем команду
         var handleCommandResult = this.getNotCompletedOrdersQueryHandler.handle(command);
         if (handleCommandResult.isFailure())
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.badRequest().build();
 
         // Формируем ответ
         var response = handleCommandResult
