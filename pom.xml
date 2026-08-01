@@ -67,7 +67,7 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
-        <!-- Spring Boot Web и Data JPA -->
+        <!-- Spring Boot Web и Data JDBC -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -173,6 +173,7 @@
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.6</version>
         </dependency>
+
         <!-- gRPC и Protobuf -->
         <dependency>
             <groupId>io.grpc</groupId>
@@ -220,6 +221,7 @@
             <artifactId>protobuf-java-util</artifactId>
             <version>3.24.3</version>
         </dependency>
+
         <!-- 12 Module -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
