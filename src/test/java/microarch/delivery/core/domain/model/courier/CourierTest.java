@@ -159,8 +159,7 @@ class CourierTest {
     @Test
     void equals_withSameId_returnsTrue() {
         Courier first = createCourier(1, 1);
-        Courier sameIdDifferentData = Courier
-                .create(COURIER_ID, "Petr", Location.create(9, 9).getValue()).getValue();
+        Courier sameIdDifferentData = Courier.create(COURIER_ID, "Petr", Location.create(9, 9).getValue()).getValue();
 
         assertThat(first).isEqualTo(sameIdDifferentData);
 

@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-
 public class CreateCourierCommandHandlerTest {
     private final CourierRepository courierRepository = mock(CourierRepository.class);
     private final DomainEventPublisher domainEventPublisher = mock(DomainEventPublisher.class);
@@ -26,10 +25,7 @@ public class CreateCourierCommandHandlerTest {
         // Act
         var handler = new CreateCourierCommandHandlerImpl(courierRepository, domainEventPublisher);
 
-        var command = CreateCourierCommand.create(
-                courierId,
-                name
-        ).getValue();
+        var command = CreateCourierCommand.create(courierId, name).getValue();
 
         handler.handle(command);
 

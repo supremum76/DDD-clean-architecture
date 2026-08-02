@@ -15,9 +15,7 @@ public enum AssignmentStatus {
     }
 
     public static AssignmentStatus fromCode(int code) {
-        return Arrays.stream(values())
-                .filter(e -> e.code == code)
-                .findFirst()
+        return Arrays.stream(values()).filter(e -> e.code == code).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unknown assignment status code " + code));
     }
 

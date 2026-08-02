@@ -27,38 +27,25 @@ import java.util.List;
 public interface GetCouriersApi {
 
     String PATH_GET_COURIERS = "/api/v1/couriers";
+
     /**
-     * GET /api/v1/couriers : Получить всех курьеров
-     * Позволяет получить всех курьеров
+     * GET /api/v1/couriers : Получить всех курьеров Позволяет получить всех курьеров
      *
-     * @return Успешный ответ (status code 200)
-     *         or Некорректные параметры запроса (status code 400)
-     *         or Внутренняя ошибка сервиса (status code 500)
+     * @return Успешный ответ (status code 200) or Некорректные параметры запроса (status code 400) or Внутренняя ошибка
+     *         сервиса (status code 500)
      */
-    @Operation(
-        operationId = "getCouriers",
-        summary = "Получить всех курьеров",
-        description = "Позволяет получить всех курьеров",
-        tags = { "GetCouriers" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Успешный ответ", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Courier.class)))
-            }),
-            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = GetCouriersApi.PATH_GET_COURIERS,
-        produces = { "application/json" }
-    )
+    @Operation(operationId = "getCouriers", summary = "Получить всех курьеров", description = "Позволяет получить всех курьеров", tags = {
+            "GetCouriers" }, responses = {
+                    @ApiResponse(responseCode = "200", description = "Успешный ответ", content = {
+                            @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Courier.class))) }),
+                    @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }),
+                    @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }) })
+    @RequestMapping(method = RequestMethod.GET, value = GetCouriersApi.PATH_GET_COURIERS, produces = {
+            "application/json" })
     ResponseEntity<List<Courier>> getCouriers(
-        
+
     );
 
 }

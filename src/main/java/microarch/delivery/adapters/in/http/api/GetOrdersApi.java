@@ -27,38 +27,23 @@ import java.util.List;
 public interface GetOrdersApi {
 
     String PATH_GET_ORDERS = "/api/v1/orders/active";
+
     /**
-     * GET /api/v1/orders/active : Получить все незавершенные заказы
-     * Позволяет получить все незавершенные заказы
+     * GET /api/v1/orders/active : Получить все незавершенные заказы Позволяет получить все незавершенные заказы
      *
-     * @return Успешный ответ (status code 200)
-     *         or Некорректные параметры запроса (status code 400)
-     *         or Внутренняя ошибка сервиса (status code 500)
+     * @return Успешный ответ (status code 200) or Некорректные параметры запроса (status code 400) or Внутренняя ошибка
+     *         сервиса (status code 500)
      */
-    @Operation(
-        operationId = "getOrders",
-        summary = "Получить все незавершенные заказы",
-        description = "Позволяет получить все незавершенные заказы",
-        tags = { "GetOrders" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Успешный ответ", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Order.class)))
-            }),
-            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = GetOrdersApi.PATH_GET_ORDERS,
-        produces = { "application/json" }
-    )
+    @Operation(operationId = "getOrders", summary = "Получить все незавершенные заказы", description = "Позволяет получить все незавершенные заказы", tags = {
+            "GetOrders" }, responses = { @ApiResponse(responseCode = "200", description = "Успешный ответ", content = {
+                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Order.class))) }),
+                    @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }),
+                    @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }) })
+    @RequestMapping(method = RequestMethod.GET, value = GetOrdersApi.PATH_GET_ORDERS, produces = { "application/json" })
     ResponseEntity<List<Order>> getOrders(
-        
+
     );
 
 }

@@ -41,7 +41,8 @@ public final class Assignment extends BaseEntity<UUID> {
         return Result.success(new Assignment(id, orderId, volume, location, AssignmentStatus.ASSIGNED));
     }
 
-    static public Assignment dto2domain(UUID id, UUID orderId, Volume volume, Location location, AssignmentStatus status) {
+    static public Assignment dto2domain(UUID id, UUID orderId, Volume volume, Location location,
+            AssignmentStatus status) {
         return new Assignment(id, orderId, volume, location, status);
     }
 

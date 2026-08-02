@@ -37,32 +37,21 @@ class CourierRepositoryImplTest extends JdbcTestBaseConfig {
         // Примечание: Создаем изменяемый ArrayList, если ваш домен позволяет добавлять элементы
         List<Assignment> assignments = new ArrayList<>();
 
-        assignment1 = Assignment.dto2domain(
-                UUID.randomUUID(),
-                UUID.randomUUID(), // orderId
-                Volume.create(1).getValue(),
-                Location.create(5, 7).getValue(),
-                AssignmentStatus.ASSIGNED
-        );
+        assignment1 = Assignment.dto2domain(UUID.randomUUID(), UUID.randomUUID(), // orderId
+                Volume.create(1).getValue(), Location.create(5, 7).getValue(), AssignmentStatus.ASSIGNED);
 
-        assignment2 = Assignment.dto2domain(
-                UUID.randomUUID(),
-                UUID.randomUUID(), // orderId
+        assignment2 = Assignment.dto2domain(UUID.randomUUID(), UUID.randomUUID(), // orderId
                 Volume.create(2).getValue(),
                 Location.create(assignment1.getLocation().getX() + 1, assignment1.getLocation().getY()).getValue(),
-                AssignmentStatus.ASSIGNED
-        );
+                AssignmentStatus.ASSIGNED);
 
         assignments.add(assignment1);
         assignments.add(assignment2);
 
         // Инициализируем корневой агрегат (Courier)
-        testCourier = Courier.dto2domain(
-                UUID.randomUUID(),
-                "courier123",
+        testCourier = Courier.dto2domain(UUID.randomUUID(), "courier123",
                 Location.create(assignment1.getLocation().getX(), assignment1.getLocation().getY()).getValue(),
-                assignments
-        );
+                assignments);
     }
 
     @Test
@@ -83,21 +72,15 @@ class CourierRepositoryImplTest extends JdbcTestBaseConfig {
         assertThat(foundCourier.getLocation()).isEqualTo(testCourier.getLocation());
 
         // 2. Проверяем вложенную коллекцию назначений
-        assertThat(foundCourier.getAssignments())
-                .hasSize(2)
-                .extracting(Assignment::getId)
+        assertThat(foundCourier.getAssignments()).hasSize(2).extracting(Assignment::getId)
                 .containsExactlyInAnyOrder(assignment1.getId(), assignment2.getId());
 
         // 3. Точечно проверяем маппинг полей конкретного назначения
         Assignment savedAssignment1 = foundCourier.getAssignments().stream()
-                .filter(a -> a.getId().equals(assignment1.getId()))
-                .findFirst()
-                .orElseThrow();
+                .filter(a -> a.getId().equals(assignment1.getId())).findFirst().orElseThrow();
 
         Assignment savedAssignment2 = foundCourier.getAssignments().stream()
-                .filter(a -> a.getId().equals(assignment2.getId()))
-                .findFirst()
-                .orElseThrow();
+                .filter(a -> a.getId().equals(assignment2.getId())).findFirst().orElseThrow();
 
         assertThat(savedAssignment1.getOrderId()).isEqualTo(assignment1.getOrderId());
         assertThat(savedAssignment1.getVolume()).isEqualTo(assignment1.getVolume());
@@ -118,12 +101,8 @@ class CourierRepositoryImplTest extends JdbcTestBaseConfig {
         testCourier.completeAssignment(assignment1.getOrderId());
 
         UUID newAssignmentId = UUID.randomUUID();
-        testCourier.takeOrder(
-                newAssignmentId,
-                UUID.randomUUID(),
-                Volume.create(3).getValue(),
-                Location.create(testCourier.getLocation().getX(), testCourier.getLocation().getX()).getValue()
-        );
+        testCourier.takeOrder(newAssignmentId, UUID.randomUUID(), Volume.create(3).getValue(),
+                Location.create(testCourier.getLocation().getX(), testCourier.getLocation().getX()).getValue());
 
         // Act
         courierRepository.update(testCourier);
@@ -141,17 +120,13 @@ class CourierRepositoryImplTest extends JdbcTestBaseConfig {
 
         // Проверяем, что в назначениях только еще не выполненные назначения
         Assignment savedAssignment2 = foundCourier.getAssignments().stream()
-                .filter(a -> a.getId().equals(assignment2.getId()))
-                .findFirst()
-                .orElseThrow();
+                .filter(a -> a.getId().equals(assignment2.getId())).findFirst().orElseThrow();
         assertThat(savedAssignment2.getStatus()).isEqualTo(assignment2.getStatus());
         assertThat(savedAssignment2.getLocation()).isEqualTo(assignment2.getLocation());
 
         // Проверяем, что новое назначение появилось
-        Assignment newAssignment = foundCourier.getAssignments().stream()
-                .filter(a -> a.getId().equals(newAssignmentId))
-                .findFirst()
-                .orElseThrow();
+        Assignment newAssignment = foundCourier.getAssignments().stream().filter(a -> a.getId().equals(newAssignmentId))
+                .findFirst().orElseThrow();
     }
 
     @Test
@@ -161,12 +136,8 @@ class CourierRepositoryImplTest extends JdbcTestBaseConfig {
         courierRepository.save(testCourier);
 
         // Создаем и сохраняем второго курьера (у него 0 назначений)
-        Courier secondCourier = Courier.dto2domain(
-                UUID.randomUUID(),
-                "second courier",
-                Location.create(1, 1).getValue(),
-                List.of()
-        );
+        Courier secondCourier = Courier.dto2domain(UUID.randomUUID(), "second courier",
+                Location.create(1, 1).getValue(), List.of());
         courierRepository.save(secondCourier);
 
         // Act
@@ -175,10 +146,12 @@ class CourierRepositoryImplTest extends JdbcTestBaseConfig {
         // Assert
         assertThat(allCouriers).hasSize(2);
 
-        Courier foundCourier1 = allCouriers.stream().filter(c -> c.getId().equals(testCourier.getId())).findFirst().orElseThrow();
+        Courier foundCourier1 = allCouriers.stream().filter(c -> c.getId().equals(testCourier.getId())).findFirst()
+                .orElseThrow();
         assertThat(foundCourier1.getAssignments()).hasSize(2);
 
-        Courier foundCourier2 = allCouriers.stream().filter(c -> c.getId().equals(secondCourier.getId())).findFirst().orElseThrow();
+        Courier foundCourier2 = allCouriers.stream().filter(c -> c.getId().equals(secondCourier.getId())).findFirst()
+                .orElseThrow();
         assertThat(foundCourier2.getAssignments()).isEmpty();
     }
 }

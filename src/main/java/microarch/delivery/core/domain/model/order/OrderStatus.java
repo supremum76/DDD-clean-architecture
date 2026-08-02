@@ -17,9 +17,7 @@ public enum OrderStatus {
     }
 
     public static OrderStatus fromCode(int code) {
-        return Arrays.stream(values())
-                .filter(e -> e.code == code)
-                .findFirst()
+        return Arrays.stream(values()).filter(e -> e.code == code).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unknown order status code " + code));
     }
 }

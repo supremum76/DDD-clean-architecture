@@ -16,7 +16,8 @@ public class CreateCourierCommandHandlerImpl implements CreateCourierCommandHand
     private final CourierRepository courierRepository;
     private final DomainEventPublisher domainEventPublisher;
 
-    public CreateCourierCommandHandlerImpl(CourierRepository courierRepository, DomainEventPublisher domainEventPublisher) {
+    public CreateCourierCommandHandlerImpl(CourierRepository courierRepository,
+            DomainEventPublisher domainEventPublisher) {
         this.courierRepository = courierRepository;
         this.domainEventPublisher = domainEventPublisher;
     }

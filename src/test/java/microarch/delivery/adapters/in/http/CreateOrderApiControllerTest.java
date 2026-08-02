@@ -4,9 +4,9 @@ import libs.errs.GeneralErrors;
 import libs.errs.UnitResult;
 import microarch.delivery.adapters.in.http.model.Address;
 import microarch.delivery.adapters.in.http.model.CreateOrderResponse;
+import microarch.delivery.adapters.in.http.model.NewOrder;
 import microarch.delivery.core.application.commands.CreateOrderCommand;
 import microarch.delivery.core.application.commands.CreateOrderCommandHandler;
-import microarch.delivery.adapters.in.http.model.NewOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -59,8 +59,8 @@ class CreateOrderApiControllerTest {
         var newOrder = new NewOrder(orderId, address, volume);
 
         // Мокаем неуспешную обработку команды
-        when(createOrderHandler.handle(any(CreateOrderCommand.class))).thenReturn(
-                UnitResult.failure(GeneralErrors.valueIsInvalid("order", newOrder)));
+        when(createOrderHandler.handle(any(CreateOrderCommand.class)))
+                .thenReturn(UnitResult.failure(GeneralErrors.valueIsInvalid("order", newOrder)));
 
         // Act
         ResponseEntity<CreateOrderResponse> response = controller.createOrder(newOrder);
@@ -88,4 +88,3 @@ class CreateOrderApiControllerTest {
         verifyNoInteractions(createOrderHandler);
     }
 }
-

@@ -8,4 +8,3 @@ import java.util.Collection;
 public interface GetAllCouriersQueryHandler {
     Result<Collection<GetAllCouriersResponse>, Error> handle(GetAllCouriersQuery query);
 }
-

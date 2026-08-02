@@ -9,12 +9,8 @@ import java.util.UUID;
 
 public record AssignmentDto(UUID id, UUID orderId, int status, int volume, int locationX, int locationY) {
     public Assignment toDomain() {
-        return Assignment.dto2domain(
-                this.id,
-                this.orderId,
-                Volume.create(this.volume).getValueOrThrow(),
+        return Assignment.dto2domain(this.id, this.orderId, Volume.create(this.volume).getValueOrThrow(),
                 Location.create(this.locationX, this.locationY).getValueOrThrow(),
-                AssignmentStatus.fromCode(this.status)
-        );
+                AssignmentStatus.fromCode(this.status));
     }
 }

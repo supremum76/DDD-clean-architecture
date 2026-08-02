@@ -35,12 +35,9 @@ public class OrderRepositoryImpl implements OrderRepository {
                 VALUES(:id, :status, :volume, :location_x, :location_y)
                 """;
 
-        var params = new MapSqlParameterSource()
-                .addValue("id", order.getId())
-                .addValue("status", order.getStatus().getCode())
-                .addValue("volume", order.getVolume().getValue())
-                .addValue("location_x", order.getLocation().getX())
-                .addValue("location_y", order.getLocation().getY());
+        var params = new MapSqlParameterSource().addValue("id", order.getId())
+                .addValue("status", order.getStatus().getCode()).addValue("volume", order.getVolume().getValue())
+                .addValue("location_x", order.getLocation().getX()).addValue("location_y", order.getLocation().getY());
 
         jdbcTemplate.update(sql, params);
     }
@@ -54,16 +51,13 @@ public class OrderRepositoryImpl implements OrderRepository {
                     status = :status,
                     volume = :volume,
                     location_x = :location_x,
-                    location_y = :location_y 
+                    location_y = :location_y
                 WHERE id = :id
                 """;
 
-        var params = new MapSqlParameterSource()
-                .addValue("id", order.getId())
-                .addValue("status", order.getStatus().getCode())
-                .addValue("volume", order.getVolume().getValue())
-                .addValue("location_x", order.getLocation().getX())
-                .addValue("location_y", order.getLocation().getY());
+        var params = new MapSqlParameterSource().addValue("id", order.getId())
+                .addValue("status", order.getStatus().getCode()).addValue("volume", order.getVolume().getValue())
+                .addValue("location_x", order.getLocation().getX()).addValue("location_y", order.getLocation().getY());
 
         jdbcTemplate.update(sql, params);
     }
@@ -71,10 +65,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Optional<Order> findById(UUID orderId) {
         String sql = """
-            SELECT id, status, volume, location_x, location_y
-            FROM orders
-            WHERE id = :id
-        """;
+                    SELECT id, status, volume, location_x, location_y
+                    FROM orders
+                    WHERE id = :id
+                """;
 
         List<OrderDto> results = jdbcTemplate.query(sql, Map.of("id", orderId), orderMapper);
 
@@ -84,16 +78,13 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Optional<Order> findAnyCreated() {
         String sql = """
-            SELECT id, status, volume, location_x, location_y
-            FROM orders
-            WHERE status = :created_code
-            """;
+                SELECT id, status, volume, location_x, location_y
+                FROM orders
+                WHERE status = :created_code
+                """;
 
-        List<OrderDto> results = jdbcTemplate.query(
-                sql,
-                Map.of("created_code", OrderStatus.CREATED.getCode()),
-                orderMapper
-        );
+        List<OrderDto> results = jdbcTemplate.query(sql, Map.of("created_code", OrderStatus.CREATED.getCode()),
+                orderMapper);
 
         return results.stream().map(OrderDto::toDomain).findFirst();
     }
@@ -101,16 +92,13 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Collection<Order> findAllAssigned() {
         String sql = """
-            SELECT id, status, volume, location_x, location_y
-            FROM orders
-            WHERE status = :assigned_code
-            """;
+                SELECT id, status, volume, location_x, location_y
+                FROM orders
+                WHERE status = :assigned_code
+                """;
 
-        List<OrderDto> results = jdbcTemplate.query(
-                sql,
-                Map.of("assigned_code", OrderStatus.ASSIGNED.getCode()),
-                orderMapper
-        );
+        List<OrderDto> results = jdbcTemplate.query(sql, Map.of("assigned_code", OrderStatus.ASSIGNED.getCode()),
+                orderMapper);
 
         return results.stream().map(OrderDto::toDomain).toList();
     }

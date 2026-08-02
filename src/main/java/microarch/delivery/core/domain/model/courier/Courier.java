@@ -63,7 +63,7 @@ public final class Courier extends Aggregate<UUID> {
         }
 
         Result<Assignment, Error> assignment = Assignment.create(assignmentId, orderId, volume, orderLocation);
-        if(assignment.isFailure()) {
+        if (assignment.isFailure()) {
             return UnitResult.failure(assignment.getError());
         }
         assignments.add(assignment.getValue());

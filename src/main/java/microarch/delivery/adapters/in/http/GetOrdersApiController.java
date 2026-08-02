@@ -35,14 +35,8 @@ public class GetOrdersApiController implements GetOrdersApi {
             return ResponseEntity.badRequest().build();
 
         // Формируем ответ
-        var response = handleCommandResult
-                .getValue()
-                .stream()
-                .map(a -> new Order(
-                        a.orderId(),
-                        new Location(a.location().x(), a.location().y()))
-                )
-                .toList();
+        var response = handleCommandResult.getValue().stream()
+                .map(a -> new Order(a.orderId(), new Location(a.location().x(), a.location().y()))).toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

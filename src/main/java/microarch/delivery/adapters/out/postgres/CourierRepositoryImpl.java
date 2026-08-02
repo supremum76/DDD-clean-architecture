@@ -26,12 +26,12 @@ import java.util.stream.Stream;
 public class CourierRepositoryImpl implements CourierRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     // Создаем мапперы один раз. Он автоматически свяжет колонки SQL с полями Dto
-    private final DataClassRowMapper<CourierFlatRecord> courierMapper =
-            DataClassRowMapper.newInstance(CourierFlatRecord.class);
-    private final DataClassRowMapper<AssignmentDto> assignmentMapper =
-            DataClassRowMapper.newInstance(AssignmentDto.class);
-    private final DataClassRowMapper<CourierAllDataFlatRecord> courierAllDataMapper =
-            DataClassRowMapper.newInstance(CourierAllDataFlatRecord.class);
+    private final DataClassRowMapper<CourierFlatRecord> courierMapper = DataClassRowMapper
+            .newInstance(CourierFlatRecord.class);
+    private final DataClassRowMapper<AssignmentDto> assignmentMapper = DataClassRowMapper
+            .newInstance(AssignmentDto.class);
+    private final DataClassRowMapper<CourierAllDataFlatRecord> courierAllDataMapper = DataClassRowMapper
+            .newInstance(CourierAllDataFlatRecord.class);
 
     // Спринг автоматически внедрит jdbcTemplate
     public CourierRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -46,9 +46,7 @@ public class CourierRepositoryImpl implements CourierRepository {
                 VALUES(:id, :name, :location_x, :location_y)
                 """;
 
-        var params = new MapSqlParameterSource()
-                .addValue("id", courier.getId())
-                .addValue("name", courier.getName())
+        var params = new MapSqlParameterSource().addValue("id", courier.getId()).addValue("name", courier.getName())
                 .addValue("location_x", courier.getLocation().getX())
                 .addValue("location_y", courier.getLocation().getY());
 
@@ -69,10 +67,8 @@ public class CourierRepositoryImpl implements CourierRepository {
                 WHERE id = :courier_id
                 """;
 
-        var params = new MapSqlParameterSource()
-                .addValue("courier_id", courier.getId())
-                .addValue("name", courier.getName())
-                .addValue("location_x", courier.getLocation().getX())
+        var params = new MapSqlParameterSource().addValue("courier_id", courier.getId())
+                .addValue("name", courier.getName()).addValue("location_x", courier.getLocation().getX())
                 .addValue("location_y", courier.getLocation().getY());
 
         jdbcTemplate.update(sql, params);
@@ -84,141 +80,104 @@ public class CourierRepositoryImpl implements CourierRepository {
     public Optional<Courier> findById(UUID courierId) {
         String sqlCourier = "SELECT id, name, location_x, location_y FROM couriers WHERE id = :id";
 
-        Optional<CourierFlatRecord> courierOpt = jdbcTemplate
-                .query(sqlCourier, Map.of("id", courierId), courierMapper)
-                .stream()
-                .findFirst();
+        Optional<CourierFlatRecord> courierOpt = jdbcTemplate.query(sqlCourier, Map.of("id", courierId), courierMapper)
+                .stream().findFirst();
 
-        if(courierOpt.isEmpty()) return Optional.empty();
+        if (courierOpt.isEmpty())
+            return Optional.empty();
         var courier = courierOpt.get();
 
         String sqlAssignments = """
-            SELECT id, order_id, status, volume, location_x, location_y
-            FROM assignments
-            WHERE
-                    courier_id = :courier_id
-                AND status = :assigned_status
-        """;
+                    SELECT id, order_id, status, volume, location_x, location_y
+                    FROM assignments
+                    WHERE
+                            courier_id = :courier_id
+                        AND status = :assigned_status
+                """;
 
-        List<Assignment> assignments = jdbcTemplate.query(
-                sqlAssignments,
-                Map.of(
-                        "courier_id", courierId,
-                        "assigned_status", AssignmentStatus.ASSIGNED.getCode()
-                ),
-                        assignmentMapper
-                )
-                .stream().map(AssignmentDto::toDomain).toList();
+        List<Assignment> assignments = jdbcTemplate.query(sqlAssignments,
+                Map.of("courier_id", courierId, "assigned_status", AssignmentStatus.ASSIGNED.getCode()),
+                assignmentMapper).stream().map(AssignmentDto::toDomain).toList();
 
-        return Optional.of(
-                Courier.dto2domain(
-                        courier.id,
-                        courier.name,
-                        Location.create(courier.locationX, courier.locationY).getValueOrThrow(),
-                        assignments
-                )
-        );
+        return Optional.of(Courier.dto2domain(courier.id, courier.name,
+                Location.create(courier.locationX, courier.locationY).getValueOrThrow(), assignments));
 
     }
 
     @Override
     public Collection<Courier> findAll() {
         String sql = """
-            SELECT
-                couriers.id AS courier_id,
-                couriers.name,
-                couriers.location_x AS courier_location_x,
-                couriers.location_y AS courier_location_y,
-        
-                assignments.id AS assignment_id,
-                assignments.order_id AS order_id,
-                coalesce(assignments.status, 0) AS status,
-                coalesce(assignments.volume, 0) AS volume,
-                coalesce(assignments.location_x, 0) AS assignment_location_x,
-                coalesce(assignments.location_y, 0) AS assignment_location_y
-            FROM
-                couriers
-                LEFT JOIN assignments ON
-                        couriers.id = assignments.courier_id
-                    AND assignments.status = :assigned_status
-            ORDER BY courier_id
-        """;
+                    SELECT
+                        couriers.id AS courier_id,
+                        couriers.name,
+                        couriers.location_x AS courier_location_x,
+                        couriers.location_y AS courier_location_y,
 
-        return jdbcTemplate.query(
-                        sql,
-                        Map.of("assigned_status", AssignmentStatus.ASSIGNED.getCode()),
-                        courierAllDataMapper
-                )
+                        assignments.id AS assignment_id,
+                        assignments.order_id AS order_id,
+                        coalesce(assignments.status, 0) AS status,
+                        coalesce(assignments.volume, 0) AS volume,
+                        coalesce(assignments.location_x, 0) AS assignment_location_x,
+                        coalesce(assignments.location_y, 0) AS assignment_location_y
+                    FROM
+                        couriers
+                        LEFT JOIN assignments ON
+                                couriers.id = assignments.courier_id
+                            AND assignments.status = :assigned_status
+                    ORDER BY courier_id
+                """;
+
+        return jdbcTemplate
+                .query(sql, Map.of("assigned_status", AssignmentStatus.ASSIGNED.getCode()), courierAllDataMapper)
                 .stream()
-                .map(row ->
-                        Courier.dto2domain(
-                                row.courierId,
-                                row.name,
-                                Location.create(row.courierLocationX, row.courierLocationY).getValueOrThrow(),
-                                row.assignmentId == null ? List.of() :
-                                        List.of(
-                                                Assignment.dto2domain(
-                                                        row.assignmentId,
-                                                        row.orderId,
-                                                        Volume.create(row.volume).getValueOrThrow(),
-                                                        Location.create(row.assignmentLocationX, row.assignmentLocationY).getValueOrThrow(),
-                                                        AssignmentStatus.fromCode(row.status)
-                                                )
-                                        )
-                        )
-                )
+                .map(row -> Courier.dto2domain(row.courierId, row.name,
+                        Location.create(row.courierLocationX, row.courierLocationY).getValueOrThrow(),
+                        row.assignmentId == null ? List.of()
+                                : List.of(Assignment.dto2domain(row.assignmentId, row.orderId,
+                                        Volume.create(row.volume).getValueOrThrow(),
+                                        Location.create(row.assignmentLocationX, row.assignmentLocationY)
+                                                .getValueOrThrow(),
+                                        AssignmentStatus.fromCode(row.status)))))
                 .collect(
-                        Collectors.toMap(
-                                Courier::getId,
-                                Function.identity(),
-                                (existing, replacement) ->
-                                        Courier.dto2domain(
-                                                existing.getId(),
-                                                existing.getName(),
-                                                existing.getLocation(),
-                                                Stream.concat(existing.getAssignments().stream(), replacement.getAssignments().stream()).toList()
-                                        )
-                        )
-                ).values();
+                        Collectors
+                                .toMap(Courier::getId, Function.identity(),
+                                        (existing, replacement) -> Courier
+                                                .dto2domain(existing.getId(), existing.getName(),
+                                                        existing.getLocation(),
+                                                        Stream.concat(existing.getAssignments().stream(),
+                                                                replacement.getAssignments().stream()).toList())))
+                .values();
     }
 
     @Transactional
-    private void updateAssignments(UUID courierId, Collection<Assignment> assignments){
+    private void updateAssignments(UUID courierId, Collection<Assignment> assignments) {
         final var dummy_params = new MapSqlParameterSource();
 
         jdbcTemplate.update("""
-                    CREATE TEMPORARY TABLE IF NOT EXISTS temp_assignments (
-                        id UUID NOT NULL,
-                        order_id UUID NOT NULL,
-                        status int NOT NULL,
-                        volume int NOT NULL,
-                        location_x int NOT NULL,
-                        location_y int NOT NULL
-                    )
-                    """,
-                dummy_params);
+                CREATE TEMPORARY TABLE IF NOT EXISTS temp_assignments (
+                    id UUID NOT NULL,
+                    order_id UUID NOT NULL,
+                    status int NOT NULL,
+                    volume int NOT NULL,
+                    location_x int NOT NULL,
+                    location_y int NOT NULL
+                )
+                """, dummy_params);
 
         // очищаем от данных предыдущих вызовов
         jdbcTemplate.update("""
-                    TRUNCATE PG_TEMP.temp_assignments
-                    """,
-                dummy_params);
+                TRUNCATE PG_TEMP.temp_assignments
+                """, dummy_params);
 
         String sqlFillTemporaryTable = """
                 INSERT INTO temp_assignments(id, order_id, status, volume, location_x, location_y)
                 VALUES(:id, :orderId, :status, :volume, :locationX, :locationY)
                 """;
-        SqlParameterSource[] batchArgs = SqlParameterSourceUtils.createBatch(
-                assignments.stream().map(assignment -> new AssignmentDto(
-                        assignment.getId(),
-                        assignment.getOrderId(),
-                        assignment.getStatus().getCode(),
-                        assignment.getVolume().getValue(),
-                        assignment.getLocation().getX(),
-                        assignment.getLocation().getY()
-                        )
-                ).toList()
-        );
+        SqlParameterSource[] batchArgs = SqlParameterSourceUtils.createBatch(assignments.stream()
+                .map(assignment -> new AssignmentDto(assignment.getId(), assignment.getOrderId(),
+                        assignment.getStatus().getCode(), assignment.getVolume().getValue(),
+                        assignment.getLocation().getX(), assignment.getLocation().getY()))
+                .toList());
         jdbcTemplate.batchUpdate(sqlFillTemporaryTable, batchArgs);
 
         String sqlComplete = """
@@ -229,12 +188,8 @@ public class CourierRepositoryImpl implements CourierRepository {
                    AND status != :complete_code
                    AND id NOT IN(SELECT temp_assignments.id FROM temp_assignments)
                 """;
-        jdbcTemplate.update(
-                sqlComplete,
-                new MapSqlParameterSource()
-                        .addValue("courier_id", courierId)
-                        .addValue("complete_code", AssignmentStatus.COMPLETED.getCode())
-        );
+        jdbcTemplate.update(sqlComplete, new MapSqlParameterSource().addValue("courier_id", courierId)
+                .addValue("complete_code", AssignmentStatus.COMPLETED.getCode()));
 
         String sqlInsert = """
                 INSERT INTO assignments(id, courier_id, order_id, status, volume, location_x, location_y)
@@ -242,27 +197,16 @@ public class CourierRepositoryImpl implements CourierRepository {
                 FROM temp_assignments
                 ON CONFLICT (id) DO NOTHING
                 """;
-        jdbcTemplate.update(
-                sqlInsert,
-                new MapSqlParameterSource().addValue("courier_id", courierId)
-        );
+        jdbcTemplate.update(sqlInsert, new MapSqlParameterSource().addValue("courier_id", courierId));
     }
 
     // Технический плоский рекорд для запроса значений атрибутов курьера, без связанных с ним списков
-    private record CourierFlatRecord(UUID id, String name, int locationX, int locationY) {}
+    private record CourierFlatRecord(UUID id, String name, int locationX, int locationY) {
+    }
 
     // Технический плоский рекорд для запроса значений атрибутов курьера и связанных с ним назначений заказов
-    private record CourierAllDataFlatRecord(
-            UUID courierId,
-            String name,
-            int courierLocationX,
-            int courierLocationY,
+    private record CourierAllDataFlatRecord(UUID courierId, String name, int courierLocationX, int courierLocationY,
 
-            UUID assignmentId,
-            UUID orderId,
-            int status,
-            int volume,
-            int assignmentLocationX,
-            int assignmentLocationY
-    ) {}
+            UUID assignmentId, UUID orderId, int status, int volume, int assignmentLocationX, int assignmentLocationY) {
+    }
 }

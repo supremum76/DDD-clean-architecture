@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 public class GetAllCouriersQueryHandlerImpl implements GetAllCouriersQueryHandler {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final DataClassRowMapper<CourierFlatRecord> courierMapper =
-            DataClassRowMapper.newInstance(CourierFlatRecord.class);
+    private final DataClassRowMapper<CourierFlatRecord> courierMapper = DataClassRowMapper
+            .newInstance(CourierFlatRecord.class);
 
     public GetAllCouriersQueryHandlerImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -36,21 +36,14 @@ public class GetAllCouriersQueryHandlerImpl implements GetAllCouriersQueryHandle
                 FROM couriers
                 """;
 
-        var couriers = jdbcTemplate.query(
-                        sql,
-                        Map.of(),
-                        courierMapper
-                )
-                .stream()
-                .map(row -> new GetAllCouriersResponse(
-                        row.id,
-                        row.name,
-                        new LocationDto(row.locationX, row.locationY)))
+        var couriers = jdbcTemplate.query(sql, Map.of(), courierMapper).stream()
+                .map(row -> new GetAllCouriersResponse(row.id, row.name, new LocationDto(row.locationX, row.locationY)))
                 .toList();
 
         return Result.success(couriers);
     }
 
     // Технический плоский рекорд для запроса значений атрибутов курьера, без связанных с ним списков
-    private record CourierFlatRecord(UUID id, String name, int locationX, int locationY) {}
+    private record CourierFlatRecord(UUID id, String name, int locationX, int locationY) {
+    }
 }

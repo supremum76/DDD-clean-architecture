@@ -8,8 +8,10 @@ import java.util.UUID;
 
 public interface CourierRepository {
     void save(Courier courier);
+
     void update(Courier courier);
 
     Optional<Courier> findById(UUID courierId);
+
     Collection<Courier> findAll();
 }

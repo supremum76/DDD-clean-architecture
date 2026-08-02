@@ -26,24 +26,16 @@ public class CompleteOrderCommandHandlerTest {
         var orderId = UUID.randomUUID();
         var courierId = UUID.randomUUID();
 
-        when(courierRepository.findById(courierId))
-                .thenReturn(Optional.of(courier));
+        when(courierRepository.findById(courierId)).thenReturn(Optional.of(courier));
 
-        when(orderRepository.findById(orderId))
-                .thenReturn(Optional.of(order));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
-        when(courier.completeAssignment(orderId))
-                .thenReturn(UnitResult.success());
+        when(courier.completeAssignment(orderId)).thenReturn(UnitResult.success());
 
-        when(order.complete())
-                .thenReturn(UnitResult.success());
+        when(order.complete()).thenReturn(UnitResult.success());
 
         // Act
-        var handler = new CompleteOrderCommandHandlerImpl(
-                courierRepository,
-                orderRepository,
-                domainEventPublisher
-        );
+        var handler = new CompleteOrderCommandHandlerImpl(courierRepository, orderRepository, domainEventPublisher);
 
         var command = CompleteOrderCommand.create(courierId, orderId).getValue();
 

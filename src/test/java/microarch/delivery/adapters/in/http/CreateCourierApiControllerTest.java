@@ -48,8 +48,8 @@ class CreateCourierApiControllerTest {
         var newCourier = new NewCourier("Courier 123");
 
         // Мокаем неуспешную обработку команды
-        when(createCourierHandler.handle(any(CreateCourierCommand.class))).thenReturn(
-                UnitResult.failure(GeneralErrors.valueIsInvalid("courier", newCourier)));
+        when(createCourierHandler.handle(any(CreateCourierCommand.class)))
+                .thenReturn(UnitResult.failure(GeneralErrors.valueIsInvalid("courier", newCourier)));
 
         // Act
         ResponseEntity<CreateCourierResponse> response = controller.createCourier(newCourier);

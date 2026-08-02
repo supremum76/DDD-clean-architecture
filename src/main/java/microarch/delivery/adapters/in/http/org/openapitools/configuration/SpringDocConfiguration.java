@@ -15,13 +15,7 @@ public class SpringDocConfiguration {
 
     @Bean(name = "org.openapitools.configuration.SpringDocConfiguration.apiInfo")
     OpenAPI apiInfo() {
-        return new OpenAPI()
-                .info(
-                        new Info()
-                                .title("Swagger Delivery")
-                                .description("Отвечает за учет курьеров, диспетчеризацию доставок, доставку")
-                                .version("1.0.0")
-                )
-        ;
+        return new OpenAPI().info(new Info().title("Swagger Delivery")
+                .description("Отвечает за учет курьеров, диспетчеризацию доставок, доставку").version("1.0.0"));
     }
 }

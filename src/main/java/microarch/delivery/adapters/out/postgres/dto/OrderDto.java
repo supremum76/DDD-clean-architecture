@@ -9,11 +9,7 @@ import java.util.UUID;
 public record OrderDto(UUID id, int status, int volume, int locationX, int locationY) {
 
     public Order toDomain() {
-        return Order.dto2domain(
-                this.id,
-                Location.create(this.locationX, this.locationY).getValueOrThrow(),
-                Volume.create(this.volume).getValueOrThrow(),
-                OrderStatus.fromCode(this.status)
-        );
+        return Order.dto2domain(this.id, Location.create(this.locationX, this.locationY).getValueOrThrow(),
+                Volume.create(this.volume).getValueOrThrow(), OrderStatus.fromCode(this.status));
     }
 }
