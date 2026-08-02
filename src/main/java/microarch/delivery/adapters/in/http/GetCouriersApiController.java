@@ -35,14 +35,8 @@ public class GetCouriersApiController implements GetCouriersApi {
             return ResponseEntity.badRequest().build();
 
         // Формируем ответ
-        var response = handleCommandResult
-                .getValue()
-                .stream()
-                .map(a -> new Courier(
-                        a.courierId(),
-                        a.name(),
-                        new Location(a.location().x(), a.location().y()))
-                )
+        var response = handleCommandResult.getValue().stream()
+                .map(a -> new Courier(a.courierId(), a.name(), new Location(a.location().x(), a.location().y())))
                 .toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

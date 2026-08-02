@@ -8,4 +8,3 @@ import java.util.Collection;
 public interface GetNotCompletedOrdersQueryHandler {
     Result<Collection<GetNotCompletedOrdersResponse>, Error> handle(GetNotCompletedOrdersQuery query);
 }
-

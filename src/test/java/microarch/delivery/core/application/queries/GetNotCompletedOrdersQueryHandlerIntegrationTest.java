@@ -16,7 +16,16 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import({OrderRepositoryImpl.class, CourierRepositoryImpl.class, GetNotCompletedOrdersQueryHandlerImpl.class}) // Явно импортируем наш репозиторий, так как @JdbcTest его не сканирует
+@Import({ OrderRepositoryImpl.class, CourierRepositoryImpl.class, GetNotCompletedOrdersQueryHandlerImpl.class }) // Явно
+                                                                                                                 // импортируем
+                                                                                                                 // наш
+                                                                                                                 // репозиторий,
+                                                                                                                 // так
+                                                                                                                 // как
+                                                                                                                 // @JdbcTest
+                                                                                                                 // его
+                                                                                                                 // не
+                                                                                                                 // сканирует
 class GetNotCompletedOrdersQueryHandlerIntegrationTest extends JdbcTestBaseConfig {
     @Autowired
     private CourierRepository courierRepository;
@@ -42,47 +51,21 @@ class GetNotCompletedOrdersQueryHandlerIntegrationTest extends JdbcTestBaseConfi
     @Test
     void testGetNotCompletedOrders_ExistsOrders() {
         // Arrange
-        var courier = Courier.create(
-                UUID.randomUUID(),
-                "courier123",
-                Location.create(1, 2).getValue()
-        ).getValue();
+        var courier = Courier.create(UUID.randomUUID(), "courier123", Location.create(1, 2).getValue()).getValue();
 
         courierRepository.save(courier);
 
-        var order1 = Order.create(
-                UUID.randomUUID(),
-                courier.getLocation(),
-                Volume.create(1).getValue()
-        ).getValue();
+        var order1 = Order.create(UUID.randomUUID(), courier.getLocation(), Volume.create(1).getValue()).getValue();
 
-        var order2 = Order.create(
-                UUID.randomUUID(),
-                courier.getLocation(),
-                Volume.create(1).getValue()
-        ).getValue();
+        var order2 = Order.create(UUID.randomUUID(), courier.getLocation(), Volume.create(1).getValue()).getValue();
 
-        var order3 = Order.create(
-                UUID.randomUUID(),
-                courier.getLocation(),
-                Volume.create(1).getValue()
-        ).getValue();
+        var order3 = Order.create(UUID.randomUUID(), courier.getLocation(), Volume.create(1).getValue()).getValue();
 
-        courier.takeOrder(
-                UUID.randomUUID(),
-                order2.getId(),
-                order2.getVolume(),
-                order2.getLocation()
-        );
+        courier.takeOrder(UUID.randomUUID(), order2.getId(), order2.getVolume(), order2.getLocation());
         order2.assign();
 
         var assignmentId = UUID.randomUUID();
-        courier.takeOrder(
-                assignmentId,
-                order3.getId(),
-                order3.getVolume(),
-                order3.getLocation()
-        );
+        courier.takeOrder(assignmentId, order3.getId(), order3.getVolume(), order3.getLocation());
         order3.assign();
         courier.completeAssignment(assignmentId);
         order3.complete();
@@ -99,23 +82,8 @@ class GetNotCompletedOrdersQueryHandlerIntegrationTest extends JdbcTestBaseConfi
         assertThat(result.isSuccess()).isTrue();
         var response = result.getValue();
         assertThat(response.size()).isEqualTo(2);
-        assertThat(
-                response
-                        .stream()
-                        .filter(a -> a.orderId().equals(order1.getId()))
-                        .toList()
-        ).hasSize(1);
-        assertThat(
-                response
-                        .stream()
-                        .filter(a -> a.orderId().equals(order2.getId()))
-                        .toList()
-        ).hasSize(1);
-        assertThat(
-                response
-                        .stream()
-                        .filter(a -> a.orderId().equals(order3.getId()))
-                        .toList()
-        ).hasSize(0);
+        assertThat(response.stream().filter(a -> a.orderId().equals(order1.getId())).toList()).hasSize(1);
+        assertThat(response.stream().filter(a -> a.orderId().equals(order2.getId())).toList()).hasSize(1);
+        assertThat(response.stream().filter(a -> a.orderId().equals(order3.getId())).toList()).hasSize(0);
     }
 }

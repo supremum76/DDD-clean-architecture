@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-
 import java.util.*;
 import jakarta.annotation.Generated;
 
@@ -22,176 +21,177 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-18T17:07:44.405384900+03:00[Europe/Moscow]", comments = "Generator version: 7.23.0")
 public class Address {
 
-  private String country;
+    private String country;
 
-  private String city;
+    private String city;
 
-  private String street;
+    private String street;
 
-  private String house;
+    private String house;
 
-  private String apartment;
+    private String apartment;
 
-  public Address() {
-    super();
-  }
-
-  /**
-   * Constructor with only required parameters
-   */
-  public Address(String country, String city, String street, String house, String apartment) {
-    this.country = country;
-    this.city = city;
-    this.street = street;
-    this.house = house;
-    this.apartment = apartment;
-  }
-
-  public Address country(String country) {
-    this.country = country;
-    return this;
-  }
-
-  /**
-   * Страна
-   * @return country
-   */
-  @NotNull 
-  @Schema(name = "country", description = "Страна", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("country")
-  public String getCountry() {
-    return country;
-  }
-
-  @JsonProperty("country")
-  public void setCountry(String country) {
-    this.country = country;
-  }
-
-  public Address city(String city) {
-    this.city = city;
-    return this;
-  }
-
-  /**
-   * Город
-   * @return city
-   */
-  @NotNull 
-  @Schema(name = "city", description = "Город", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("city")
-  public String getCity() {
-    return city;
-  }
-
-  @JsonProperty("city")
-  public void setCity(String city) {
-    this.city = city;
-  }
-
-  public Address street(String street) {
-    this.street = street;
-    return this;
-  }
-
-  /**
-   * Улица
-   * @return street
-   */
-  @NotNull 
-  @Schema(name = "street", description = "Улица", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("street")
-  public String getStreet() {
-    return street;
-  }
-
-  @JsonProperty("street")
-  public void setStreet(String street) {
-    this.street = street;
-  }
-
-  public Address house(String house) {
-    this.house = house;
-    return this;
-  }
-
-  /**
-   * Дом
-   * @return house
-   */
-  @NotNull 
-  @Schema(name = "house", description = "Дом", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("house")
-  public String getHouse() {
-    return house;
-  }
-
-  @JsonProperty("house")
-  public void setHouse(String house) {
-    this.house = house;
-  }
-
-  public Address apartment(String apartment) {
-    this.apartment = apartment;
-    return this;
-  }
-
-  /**
-   * Квартира
-   * @return apartment
-   */
-  @NotNull 
-  @Schema(name = "apartment", description = "Квартира", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("apartment")
-  public String getApartment() {
-    return apartment;
-  }
-
-  @JsonProperty("apartment")
-  public void setApartment(String apartment) {
-    this.apartment = apartment;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public Address() {
+        super();
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    /**
+     * Constructor with only required parameters
+     */
+    public Address(String country, String city, String street, String house, String apartment) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+        this.house = house;
+        this.apartment = apartment;
     }
-    Address address = (Address) o;
-    return Objects.equals(this.country, address.country) &&
-        Objects.equals(this.city, address.city) &&
-        Objects.equals(this.street, address.street) &&
-        Objects.equals(this.house, address.house) &&
-        Objects.equals(this.apartment, address.apartment);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(country, city, street, house, apartment);
-  }
+    public Address country(String country) {
+        this.country = country;
+        return this;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class Address {\n");
-    sb.append("    country: ").append(toIndentedString(country)).append("\n");
-    sb.append("    city: ").append(toIndentedString(city)).append("\n");
-    sb.append("    street: ").append(toIndentedString(street)).append("\n");
-    sb.append("    house: ").append(toIndentedString(house)).append("\n");
-    sb.append("    apartment: ").append(toIndentedString(apartment)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+    /**
+     * Страна
+     *
+     * @return country
+     */
+    @NotNull
+    @Schema(name = "country", description = "Страна", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty("country")
+    public String getCountry() {
+        return country;
+    }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(@Nullable Object o) {
-    return o == null ? "null" : o.toString().replace("\n", "\n    ");
-  }
+    @JsonProperty("country")
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public Address city(String city) {
+        this.city = city;
+        return this;
+    }
+
+    /**
+     * Город
+     *
+     * @return city
+     */
+    @NotNull
+    @Schema(name = "city", description = "Город", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty("city")
+    public String getCity() {
+        return city;
+    }
+
+    @JsonProperty("city")
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public Address street(String street) {
+        this.street = street;
+        return this;
+    }
+
+    /**
+     * Улица
+     *
+     * @return street
+     */
+    @NotNull
+    @Schema(name = "street", description = "Улица", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty("street")
+    public String getStreet() {
+        return street;
+    }
+
+    @JsonProperty("street")
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public Address house(String house) {
+        this.house = house;
+        return this;
+    }
+
+    /**
+     * Дом
+     *
+     * @return house
+     */
+    @NotNull
+    @Schema(name = "house", description = "Дом", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty("house")
+    public String getHouse() {
+        return house;
+    }
+
+    @JsonProperty("house")
+    public void setHouse(String house) {
+        this.house = house;
+    }
+
+    public Address apartment(String apartment) {
+        this.apartment = apartment;
+        return this;
+    }
+
+    /**
+     * Квартира
+     *
+     * @return apartment
+     */
+    @NotNull
+    @Schema(name = "apartment", description = "Квартира", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty("apartment")
+    public String getApartment() {
+        return apartment;
+    }
+
+    @JsonProperty("apartment")
+    public void setApartment(String apartment) {
+        this.apartment = apartment;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Address address = (Address) o;
+        return Objects.equals(this.country, address.country) && Objects.equals(this.city, address.city)
+                && Objects.equals(this.street, address.street) && Objects.equals(this.house, address.house)
+                && Objects.equals(this.apartment, address.apartment);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(country, city, street, house, apartment);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class Address {\n");
+        sb.append("    country: ").append(toIndentedString(country)).append("\n");
+        sb.append("    city: ").append(toIndentedString(city)).append("\n");
+        sb.append("    street: ").append(toIndentedString(street)).append("\n");
+        sb.append("    house: ").append(toIndentedString(house)).append("\n");
+        sb.append("    apartment: ").append(toIndentedString(apartment)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(@Nullable Object o) {
+        return o == null ? "null" : o.toString().replace("\n", "\n    ");
+    }
 }
-

@@ -28,44 +28,29 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface CreateOrderApi {
 
     String PATH_CREATE_ORDER = "/api/v1/orders";
+
     /**
-     * POST /api/v1/orders : Создать заказ
-     * Позволяет создать заказ с целью тестирования
+     * POST /api/v1/orders : Создать заказ Позволяет создать заказ с целью тестирования
      *
-     * @param newOrder Новый заказ (required)
-     * @return Заказ успешно создан (status code 201)
-     *         or Некорректные параметры запроса (status code 400)
-     *         or Конфликт при создании заказа (status code 409)
-     *         or Внутренняя ошибка сервиса (status code 500)
+     * @param newOrder
+     *            Новый заказ (required)
+     *
+     * @return Заказ успешно создан (status code 201) or Некорректные параметры запроса (status code 400) or Конфликт
+     *         при создании заказа (status code 409) or Внутренняя ошибка сервиса (status code 500)
      */
-    @Operation(
-        operationId = "createOrder",
-        summary = "Создать заказ",
-        description = "Позволяет создать заказ с целью тестирования",
-        tags = { "CreateOrder" },
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Заказ успешно создан", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = CreateOrderResponse.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            }),
-            @ApiResponse(responseCode = "409", description = "Конфликт при создании заказа", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = CreateOrderApi.PATH_CREATE_ORDER,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+    @Operation(operationId = "createOrder", summary = "Создать заказ", description = "Позволяет создать заказ с целью тестирования", tags = {
+            "CreateOrder" }, responses = {
+                    @ApiResponse(responseCode = "201", description = "Заказ успешно создан", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = CreateOrderResponse.class)) }),
+                    @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }),
+                    @ApiResponse(responseCode = "409", description = "Конфликт при создании заказа", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }),
+                    @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }) })
+    @RequestMapping(method = RequestMethod.POST, value = CreateOrderApi.PATH_CREATE_ORDER, produces = {
+            "application/json" }, consumes = { "application/json" })
     ResponseEntity<CreateOrderResponse> createOrder(
-        @Parameter(name = "NewOrder", description = "Новый заказ", required = true) @Valid @RequestBody NewOrder newOrder
-    );
+            @Parameter(name = "NewOrder", description = "Новый заказ", required = true) @Valid @RequestBody NewOrder newOrder);
 
 }

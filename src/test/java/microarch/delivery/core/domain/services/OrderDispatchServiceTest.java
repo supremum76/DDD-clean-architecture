@@ -58,7 +58,8 @@ class OrderDispatchServiceTest {
                 Location.create(1, 1).getValue());
         Courier availableCourier = createCourier(SECOND_COURIER_ID, 1, 1);
 
-        Result<Courier, ?> result = service.dispatch(ASSIGNMENT_ID, order, List.of(overloadedCourier, availableCourier));
+        Result<Courier, ?> result = service.dispatch(ASSIGNMENT_ID, order,
+                List.of(overloadedCourier, availableCourier));
 
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.getValue()).isEqualTo(availableCourier);

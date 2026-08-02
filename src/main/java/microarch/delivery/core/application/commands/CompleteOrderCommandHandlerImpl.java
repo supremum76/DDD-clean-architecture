@@ -18,7 +18,8 @@ public class CompleteOrderCommandHandlerImpl implements CompleteOrderCommandHand
     private final OrderRepository orderRepository;
     private final DomainEventPublisher domainEventPublisher;
 
-    public CompleteOrderCommandHandlerImpl(CourierRepository courierRepository, OrderRepository orderRepository, DomainEventPublisher domainEventPublisher) {
+    public CompleteOrderCommandHandlerImpl(CourierRepository courierRepository, OrderRepository orderRepository,
+            DomainEventPublisher domainEventPublisher) {
         this.courierRepository = courierRepository;
         this.orderRepository = orderRepository;
         this.domainEventPublisher = domainEventPublisher;
@@ -38,16 +39,16 @@ public class CompleteOrderCommandHandlerImpl implements CompleteOrderCommandHand
         var order = orderOpt.get();
 
         var courierCompleteResult = courier.completeAssignment(command.getOrderId());
-        if(courierCompleteResult.isFailure())
+        if (courierCompleteResult.isFailure())
             return UnitResult.failure(courierCompleteResult.getError());
 
         var orderCompleteResult = order.complete();
-        if(orderCompleteResult.isFailure())
+        if (orderCompleteResult.isFailure())
             return UnitResult.failure(orderCompleteResult.getError());
 
         courierRepository.update(courier);
         orderRepository.update(order);
-        
+
         domainEventPublisher.publish(List.of(courier, order));
 
         return UnitResult.success();

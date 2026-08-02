@@ -39,22 +39,15 @@ public class AssignOrderCommandHandlerTest {
         var courier = Courier.create(courierId, name, courierLocation).getValue();
         var couriers = List.of(courier);
 
-        when(orderRepository.findAnyCreated())
-                .thenReturn(Optional.of(order));
+        when(orderRepository.findAnyCreated()).thenReturn(Optional.of(order));
 
-        when(courierRepository.findAll())
-                .thenReturn(List.of(courier));
+        when(courierRepository.findAll()).thenReturn(List.of(courier));
 
-        when(orderDispatchService.dispatch(any(), eq(order), eq(couriers)))
-                .thenReturn(Result.success(courier));
+        when(orderDispatchService.dispatch(any(), eq(order), eq(couriers))).thenReturn(Result.success(courier));
 
         // Act
-        var handler = new AssignOrderCommandHandlerImpl(
-                orderRepository,
-                courierRepository,
-                orderDispatchService,
-                domainEventPublisher
-        );
+        var handler = new AssignOrderCommandHandlerImpl(orderRepository, courierRepository, orderDispatchService,
+                domainEventPublisher);
 
         var command = AssignOrderCommand.create().getValue();
 

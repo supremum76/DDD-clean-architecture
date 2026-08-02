@@ -18,8 +18,8 @@ import java.util.UUID;
 public class GetNotCompletedOrdersQueryHandlerImpl implements GetNotCompletedOrdersQueryHandler {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final DataClassRowMapper<OrderFlatRecord> orderMapper =
-            DataClassRowMapper.newInstance(OrderFlatRecord.class);
+    private final DataClassRowMapper<OrderFlatRecord> orderMapper = DataClassRowMapper
+            .newInstance(OrderFlatRecord.class);
 
     public GetNotCompletedOrdersQueryHandlerImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -34,20 +34,15 @@ public class GetNotCompletedOrdersQueryHandlerImpl implements GetNotCompletedOrd
                 WHERE status != :completed_code
                 """;
 
-        var orders = jdbcTemplate.query(
-                        sql,
-                        Map.of("completed_code", OrderStatus.COMPLETED.getCode()),
-                        orderMapper
-                )
+        var orders = jdbcTemplate.query(sql, Map.of("completed_code", OrderStatus.COMPLETED.getCode()), orderMapper)
                 .stream()
-                .map(row -> new GetNotCompletedOrdersResponse(
-                        row.id,
-                        new LocationDto(row.locationX, row.locationY)))
+                .map(row -> new GetNotCompletedOrdersResponse(row.id, new LocationDto(row.locationX, row.locationY)))
                 .toList();
 
         return Result.success(orders);
     }
 
     // Технический плоский рекорд для запроса значений атрибутов курьера, без связанных с ним списков
-    private record OrderFlatRecord(UUID id, int locationX, int locationY) {}
+    private record OrderFlatRecord(UUID id, int locationX, int locationY) {
+    }
 }

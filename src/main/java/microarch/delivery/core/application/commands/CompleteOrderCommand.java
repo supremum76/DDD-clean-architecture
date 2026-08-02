@@ -16,10 +16,8 @@ public final class CompleteOrderCommand {
     private final UUID orderId;
 
     public static Result<CompleteOrderCommand, Error> create(UUID courierId, UUID orderId) {
-        var err = Guard.combine(
-                Guard.againstNullOrEmpty(courierId, "courierId"),
-                Guard.againstNullOrEmpty(orderId, "orderId")
-        );
+        var err = Guard.combine(Guard.againstNullOrEmpty(courierId, "courierId"),
+                Guard.againstNullOrEmpty(orderId, "orderId"));
         if (err != null)
             return Result.failure(err);
 

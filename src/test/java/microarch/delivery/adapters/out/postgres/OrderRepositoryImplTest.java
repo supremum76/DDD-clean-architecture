@@ -26,12 +26,8 @@ class OrderRepositoryImplTest extends JdbcTestBaseConfig {
     @BeforeEach
     void setUp() {
         // Инициализируем тестовый объект перед каждым тестом
-        testOrder = Order.dto2domain(
-                UUID.randomUUID(),
-                Location.create(3, 7).getValue(),
-                Volume.create(100).getValue(),
-                OrderStatus.CREATED
-        );
+        testOrder = Order.dto2domain(UUID.randomUUID(), Location.create(3, 7).getValue(), Volume.create(100).getValue(),
+                OrderStatus.CREATED);
     }
 
     @Test
@@ -58,11 +54,9 @@ class OrderRepositoryImplTest extends JdbcTestBaseConfig {
         // Arrange
         orderRepository.save(testOrder);
 
-        Order updatedOrder = Order.dto2domain(
-                testOrder.getId(),
+        Order updatedOrder = Order.dto2domain(testOrder.getId(),
                 Location.create(testOrder.getLocation().getX(), testOrder.getLocation().getY()).getValue(),
-                Volume.create(testOrder.getVolume().getValue()).getValue(),
-                OrderStatus.ASSIGNED // Меняем статус
+                Volume.create(testOrder.getVolume().getValue()).getValue(), OrderStatus.ASSIGNED // Меняем статус
         );
 
         // Act
@@ -96,16 +90,10 @@ class OrderRepositoryImplTest extends JdbcTestBaseConfig {
     @DisplayName("Должен вернуть список всех назначенных заказов (findAllAssigned)")
     void shouldFindAllAssignedOrders() {
         // Arrange
-        Order assignedOrder1 = Order.dto2domain(
-                UUID.randomUUID(),
-                Location.create(1, 1).getValue(),
-                Volume.create(10).getValue(),
-                OrderStatus.ASSIGNED);
-        Order assignedOrder2 = Order.dto2domain(
-                UUID.randomUUID(),
-                Location.create(2, 2).getValue(),
-                Volume.create(20).getValue(),
-                OrderStatus.ASSIGNED);
+        Order assignedOrder1 = Order.dto2domain(UUID.randomUUID(), Location.create(1, 1).getValue(),
+                Volume.create(10).getValue(), OrderStatus.ASSIGNED);
+        Order assignedOrder2 = Order.dto2domain(UUID.randomUUID(), Location.create(2, 2).getValue(),
+                Volume.create(20).getValue(), OrderStatus.ASSIGNED);
 
         orderRepository.save(testOrder); // Этот со статусом CREATED, он не должен попасть в выборку
         orderRepository.save(assignedOrder1);
@@ -115,10 +103,8 @@ class OrderRepositoryImplTest extends JdbcTestBaseConfig {
         Collection<Order> assignedOrders = orderRepository.findAllAssigned();
 
         // Assert
-        assertThat(assignedOrders)
-                .hasSize(2)
-                .extracting(Order::getId)
-                .containsExactlyInAnyOrder(assignedOrder1.getId(), assignedOrder2.getId());
+        assertThat(assignedOrders).hasSize(2).extracting(Order::getId).containsExactlyInAnyOrder(assignedOrder1.getId(),
+                assignedOrder2.getId());
     }
 
     @Test

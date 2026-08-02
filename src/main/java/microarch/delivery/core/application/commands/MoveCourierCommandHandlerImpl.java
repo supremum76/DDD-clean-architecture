@@ -15,7 +15,8 @@ public class MoveCourierCommandHandlerImpl implements MoveCourierCommandHandler 
     private final CourierRepository courierRepository;
     private final DomainEventPublisher domainEventPublisher;
 
-    public MoveCourierCommandHandlerImpl(CourierRepository courierRepository, DomainEventPublisher domainEventPublisher) {
+    public MoveCourierCommandHandlerImpl(CourierRepository courierRepository,
+            DomainEventPublisher domainEventPublisher) {
         this.courierRepository = courierRepository;
         this.domainEventPublisher = domainEventPublisher;
     }
@@ -29,7 +30,7 @@ public class MoveCourierCommandHandlerImpl implements MoveCourierCommandHandler 
         var courier = courierOpt.get();
 
         var moveResult = courier.move(command.getLocation());
-        if(moveResult.isFailure())
+        if (moveResult.isFailure())
             return UnitResult.failure(moveResult.getError());
 
         courierRepository.update(courier);

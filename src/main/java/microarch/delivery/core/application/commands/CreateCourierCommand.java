@@ -20,14 +20,9 @@ public final class CreateCourierCommand {
     private final String name;
     private final Location location;
 
-    public static Result<CreateCourierCommand, Error> create(
-            UUID courierId,
-            String name
-    ) {
-        var err = Guard.combine(
-                Guard.againstNullOrEmpty(courierId, "courierId"),
-                Guard.againstNullOrEmpty(name, "name")
-        );
+    public static Result<CreateCourierCommand, Error> create(UUID courierId, String name) {
+        var err = Guard.combine(Guard.againstNullOrEmpty(courierId, "courierId"),
+                Guard.againstNullOrEmpty(name, "name"));
         if (err != null)
             return Result.failure(err);
 

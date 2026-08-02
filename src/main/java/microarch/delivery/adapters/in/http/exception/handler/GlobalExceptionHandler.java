@@ -13,10 +13,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex) {
         // TODO Логирование ошибки (например, через SLF4j)
 
-        ErrorResponse error = ErrorResponse.create(
-                ex,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "Internal Server Error");
+        ErrorResponse error = ErrorResponse.create(ex, HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

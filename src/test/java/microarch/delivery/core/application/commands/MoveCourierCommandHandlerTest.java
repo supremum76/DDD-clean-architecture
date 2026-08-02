@@ -23,17 +23,12 @@ public class MoveCourierCommandHandlerTest {
         var courierId = UUID.randomUUID();
         var location = Location.create(1, 1).getValue();
 
-        when(courierRepository.findById(courierId))
-                .thenReturn(Optional.of(courier));
+        when(courierRepository.findById(courierId)).thenReturn(Optional.of(courier));
 
-        when(courier.move(location))
-                .thenReturn(UnitResult.success());
+        when(courier.move(location)).thenReturn(UnitResult.success());
 
         // Act
-        var handler = new MoveCourierCommandHandlerImpl(
-                courierRepository,
-                domainEventPublisher
-        );
+        var handler = new MoveCourierCommandHandlerImpl(courierRepository, domainEventPublisher);
 
         var command = MoveCourierCommand.create(courierId, location.getX(), location.getY()).getValue();
 

@@ -7,12 +7,8 @@ import org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGe
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
-@EntityScan(basePackages = {
-        "microarch.delivery.core.domain.model",
-        "microarch.delivery.adapters.out.postgres" })
-@SpringBootApplication(
-        nameGenerator = FullyQualifiedAnnotationBeanNameGenerator.class
-)
+@EntityScan(basePackages = { "microarch.delivery.core.domain.model", "microarch.delivery.adapters.out.postgres" })
+@SpringBootApplication(nameGenerator = FullyQualifiedAnnotationBeanNameGenerator.class)
 public class DeliveryApplication {
 
     public static void main(String[] args) {

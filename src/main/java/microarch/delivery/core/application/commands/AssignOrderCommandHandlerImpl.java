@@ -19,7 +19,8 @@ public class AssignOrderCommandHandlerImpl implements AssignOrderCommandHandler 
     private final OrderDispatchService orderDispatchService;
     private final DomainEventPublisher domainEventPublisher;
 
-    public AssignOrderCommandHandlerImpl(OrderRepository orderRepository, CourierRepository courierRepository, OrderDispatchService orderDispatchService, DomainEventPublisher domainEventPublisher) {
+    public AssignOrderCommandHandlerImpl(OrderRepository orderRepository, CourierRepository courierRepository,
+            OrderDispatchService orderDispatchService, DomainEventPublisher domainEventPublisher) {
         this.orderRepository = orderRepository;
         this.courierRepository = courierRepository;
         this.orderDispatchService = orderDispatchService;
@@ -37,7 +38,7 @@ public class AssignOrderCommandHandlerImpl implements AssignOrderCommandHandler 
         var couriers = courierRepository.findAll();
 
         var courierResult = orderDispatchService.dispatch(UUID.randomUUID(), order, couriers);
-        if(courierResult.isFailure())
+        if (courierResult.isFailure())
             return UnitResult.failure(courierResult.getError());
         var courier = courierResult.getValue();
 

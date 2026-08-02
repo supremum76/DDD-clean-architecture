@@ -4,10 +4,11 @@ import libs.errs.Error;
 import libs.errs.Result;
 
 public final class GetNotCompletedOrdersQuery {
-    private static final Result<GetNotCompletedOrdersQuery, Error> queryResult
-            = Result.success(new GetNotCompletedOrdersQuery());
+    private static final Result<GetNotCompletedOrdersQuery, Error> queryResult = Result
+            .success(new GetNotCompletedOrdersQuery());
 
-    private GetNotCompletedOrdersQuery(){};
+    private GetNotCompletedOrdersQuery() {
+    };
 
     public static Result<GetNotCompletedOrdersQuery, Error> create() {
         return queryResult;
