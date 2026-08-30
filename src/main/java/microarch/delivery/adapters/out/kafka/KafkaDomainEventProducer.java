@@ -3,11 +3,13 @@ package microarch.delivery.adapters.out.kafka;
 import libs.ddd.DomainEvent;
 import lombok.RequiredArgsConstructor;
 import microarch.delivery.core.domain.model.order.events.OrderAssignedDomainEvent;
+import microarch.delivery.core.domain.model.order.events.OrderCompletedDomainEvent;
 import microarch.delivery.core.ports.DomainEventProducer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import queues.order.events.OrderEventsProto.OrderAssignedIntegrationEvent;
+import queues.order.events.OrderEventsProto.OrderCompletedIntegrationEvent;
 
 import java.util.concurrent.ExecutionException;
 
@@ -27,6 +29,10 @@ public class KafkaDomainEventProducer implements DomainEventProducer {
                     var integrationEvent = mapToProto(e);
                     kafkaTemplate.send(topic, e.getOrderId().toString(), integrationEvent.toByteArray()).get();
                 }
+                case OrderCompletedDomainEvent e -> {
+                    var integrationEvent = mapToProto(e);
+                    kafkaTemplate.send(topic, e.getOrderId().toString(), integrationEvent.toByteArray()).get();
+                }
                 default -> throw new IllegalArgumentException("Unknown event type: " + event.getClass().getName());
             }
         } catch (InterruptedException e) {
@@ -40,5 +46,9 @@ public class KafkaDomainEventProducer implements DomainEventProducer {
     private OrderAssignedIntegrationEvent mapToProto(OrderAssignedDomainEvent event) {
         // Build Integration Event
         return OrderAssignedIntegrationEvent.newBuilder().setOrderId(event.getOrderId().toString()).build();
+    }
+    private OrderCompletedIntegrationEvent mapToProto(OrderCompletedDomainEvent event) {
+        // Build Integration Event
+        return OrderCompletedIntegrationEvent.newBuilder().setOrderId(event.getOrderId().toString()).build();
     }
 }
