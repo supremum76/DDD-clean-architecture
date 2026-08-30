@@ -44,6 +44,7 @@ public class AssignOrderCommandHandlerImpl implements AssignOrderCommandHandler 
 
         orderRepository.update(order);
         courierRepository.update(courier);
+
         domainEventPublisher.publish(List.of(order, courier));
 
         return UnitResult.success();

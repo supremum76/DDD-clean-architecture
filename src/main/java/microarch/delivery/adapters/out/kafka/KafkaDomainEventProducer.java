@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import queues.order.events.OrderEventsProto.OrderAssignedIntegrationEvent;
 import queues.order.events.OrderEventsProto.OrderCompletedIntegrationEvent;
 
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Component
@@ -27,11 +28,11 @@ public class KafkaDomainEventProducer implements DomainEventProducer {
             switch (event) {
                 case OrderAssignedDomainEvent e -> {
                     var integrationEvent = mapToProto(e);
-                    kafkaTemplate.send(topic, e.getOrderId().toString(), integrationEvent.toByteArray()).get();
+                    kafkaTemplate.send(topic, generateMessageKey(e.getOrderId(), "ASSIGNED"), integrationEvent.toByteArray()).get();
                 }
                 case OrderCompletedDomainEvent e -> {
                     var integrationEvent = mapToProto(e);
-                    kafkaTemplate.send(topic, e.getOrderId().toString(), integrationEvent.toByteArray()).get();
+                    kafkaTemplate.send(topic, generateMessageKey(e.getOrderId(), "COMPLETED"), integrationEvent.toByteArray()).get();
                 }
                 default -> throw new IllegalArgumentException("Unknown event type: " + event.getClass().getName());
             }
@@ -41,6 +42,10 @@ public class KafkaDomainEventProducer implements DomainEventProducer {
         } catch (ExecutionException e) {
             throw new RuntimeException("Kafka publish failed", e);
         }
+    }
+
+    private static String generateMessageKey(UUID orderId, String eventName) {
+        return  orderId.toString() + '-' + eventName;
     }
 
     private OrderAssignedIntegrationEvent mapToProto(OrderAssignedDomainEvent event) {
