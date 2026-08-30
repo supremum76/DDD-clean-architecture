@@ -188,7 +188,7 @@ public class CourierRepositoryImpl implements CourierRepository {
                    AND status != :complete_code
                    AND id NOT IN(SELECT temp_assignments.id FROM temp_assignments)
                 """;
-        jdbcTemplate.update(sqlComplete, new MapSqlParameterSource().addValue("courier_id", courierId)
+            jdbcTemplate.update(sqlComplete, new MapSqlParameterSource().addValue("courier_id", courierId)
                 .addValue("complete_code", AssignmentStatus.COMPLETED.getCode()));
 
         String sqlInsert = """
