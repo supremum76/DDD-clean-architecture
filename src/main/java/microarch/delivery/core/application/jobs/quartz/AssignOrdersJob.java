@@ -1,4 +1,4 @@
-package microarch.delivery.adapters.in.quartz;
+package microarch.delivery.core.application.jobs.quartz;
 
 import microarch.delivery.core.application.commands.AssignOrderCommand;
 import microarch.delivery.core.application.commands.AssignOrderCommandHandler;

@@ -1,4 +1,4 @@
-package microarch.delivery.adapters.in.quartz;
+package microarch.delivery.core.application.jobs.quartz;
 
 import org.quartz.*;
 import org.springframework.context.annotation.Bean;
