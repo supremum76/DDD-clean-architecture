@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-public final class Courier extends Aggregate<UUID> {
+public final class Courier extends Aggregate {
     private static final int MAX_VOLUME = 20;
 
     private final String name;

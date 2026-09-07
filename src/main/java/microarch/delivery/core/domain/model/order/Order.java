@@ -15,7 +15,7 @@ import microarch.delivery.core.domain.model.order.events.OrderCompletedDomainEve
 import java.util.UUID;
 
 @Getter
-public final class Order extends Aggregate<UUID> {
+public final class Order extends Aggregate {
     private final Location location;
     private final Volume volume;
     private OrderStatus status;

@@ -7,7 +7,7 @@ public final class GetAllCouriersQuery {
     private static final Result<GetAllCouriersQuery, Error> queryResult = Result.success(new GetAllCouriersQuery());
 
     private GetAllCouriersQuery() {
-    };
+    }
 
     public static Result<GetAllCouriersQuery, Error> create() {
         return queryResult;
