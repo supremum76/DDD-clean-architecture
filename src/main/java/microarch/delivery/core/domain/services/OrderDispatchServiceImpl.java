@@ -1,6 +1,5 @@
 package microarch.delivery.core.domain.services;
 
-import jakarta.validation.constraints.NotNull;
 import libs.errs.Error;
 import libs.errs.GeneralErrors;
 import libs.errs.Guard;
@@ -13,7 +12,6 @@ import microarch.delivery.core.domain.model.order.OrderStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 @Service

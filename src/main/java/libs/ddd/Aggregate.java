@@ -5,18 +5,19 @@ import jakarta.persistence.Transient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @MappedSuperclass
-public abstract class Aggregate<TId extends Comparable<TId>> extends BaseEntity<TId> implements AggregateRoot<TId> {
+public abstract class Aggregate extends BaseEntity implements AggregateRoot<UUID> {
 
     @Transient
-    protected List<DomainEvent> domainEvents = new ArrayList<>();
+    protected List<DomainEvent> domainEvents;
 
     protected Aggregate() {
         this.domainEvents = new ArrayList<>();
     }
 
-    protected Aggregate(TId id) {
+    protected Aggregate(UUID id) {
         super(id);
         this.domainEvents = new ArrayList<>();
     }

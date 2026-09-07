@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-public final class Assignment extends BaseEntity<UUID> {
+public final class Assignment extends BaseEntity {
     private final UUID orderId;
     private final Volume volume;
     private final Location location;

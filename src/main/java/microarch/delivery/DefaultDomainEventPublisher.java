@@ -1,7 +1,6 @@
 package microarch.delivery;
 
 import libs.ddd.Aggregate;
-import libs.ddd.DomainEvent;
 import libs.ddd.DomainEventPublisher;
 import microarch.delivery.core.ports.DomainEventProducer;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,7 @@ public class DefaultDomainEventPublisher implements DomainEventPublisher {
     }
 
     @Override
-    public void publish(Iterable<? extends Aggregate<?>> aggregates) {
+    public void publish(Iterable<? extends Aggregate> aggregates) {
         for (var aggregate : aggregates) {
             for (var event : aggregate.getDomainEvents()) {
                 publisher.produce(event);

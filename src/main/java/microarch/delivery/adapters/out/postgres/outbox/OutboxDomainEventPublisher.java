@@ -7,8 +7,6 @@ import libs.ddd.DomainEventPublisher;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Primary
 @Component
 public class OutboxDomainEventPublisher implements DomainEventPublisher {
@@ -22,7 +20,7 @@ public class OutboxDomainEventPublisher implements DomainEventPublisher {
     }
 
     @Override
-    public void publish(Iterable<? extends Aggregate<?>> aggregates) {
+    public void publish(Iterable<? extends Aggregate> aggregates) {
         try {
             for (AggregateRoot<?> aggregate : aggregates) {
                 aggregate.getDomainEvents().forEach(domainEvent -> {
@@ -32,7 +30,7 @@ public class OutboxDomainEventPublisher implements DomainEventPublisher {
                         var outboxMessage = new OutboxMessage(
                                 domainEvent.getEventId(),
                                 domainEvent.getClass().getName(),
-                                (UUID) aggregate.getId(),
+                                aggregate.getId(),
                                 aggregate.getClass().getSimpleName(),
                                 payload,
                                 domainEvent.getOccurredOnUtc());

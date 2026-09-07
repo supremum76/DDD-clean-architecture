@@ -6,18 +6,19 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @MappedSuperclass
-public abstract class BaseEntity<TId extends Comparable<TId>> implements Comparable<BaseEntity<TId>> {
+public abstract class BaseEntity implements Comparable<BaseEntity> {
     @Id
     @Column(name = "id")
-    protected TId id;
+    protected UUID id;
 
     protected BaseEntity() {
     }
 
-    protected BaseEntity(TId id) {
+    protected BaseEntity(UUID id) {
         this.id = id;
     }
 
@@ -25,7 +26,7 @@ public abstract class BaseEntity<TId extends Comparable<TId>> implements Compara
         return id == null || id.equals(defaultValue());
     }
 
-    protected TId defaultValue() {
+    protected UUID defaultValue() {
         return null;
     }
 
@@ -37,7 +38,7 @@ public abstract class BaseEntity<TId extends Comparable<TId>> implements Compara
         if (this == obj)
             return true;
 
-        if (!(obj instanceof BaseEntity<?> other))
+        if (!(obj instanceof BaseEntity other))
             return false;
 
         if (!this.getClass().equals(other.getClass()))
@@ -55,7 +56,7 @@ public abstract class BaseEntity<TId extends Comparable<TId>> implements Compara
     }
 
     @Override
-    public int compareTo(BaseEntity<TId> other) {
+    public int compareTo(BaseEntity other) {
         if (other == null)
             return 1;
 
